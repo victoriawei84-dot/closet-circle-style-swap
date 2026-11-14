@@ -30,4 +30,4 @@
 - [x] Recolor Inside SisUse photos to match landing palette (Victoria)
 - [x] Expand demo inventory: 13 non-dress pieces, 2+ non-dress looks, community posts (Kaixi)
 - [x] Manage your closet tile: woman at home showing closet pieces on hangers (Cuimei)
-- [ ] Restyle Discover, AI Try-On, Closet homepage tiles to match uploaded reference style (Victoria)
+- [x] Restyle Discover, AI Try-On, Closet homepage tiles to match uploaded reference style (Victoria)
