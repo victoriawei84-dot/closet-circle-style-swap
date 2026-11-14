@@ -123,6 +123,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
+  useWarmSections();
   const { queryClient } = Route.useRouteContext();
 
   return (
@@ -136,4 +137,20 @@ function RootComponent() {
       </StoreProvider>
     </QueryClientProvider>
   );
+}
+
+// Main sections reached from the nav. Their page code is downloaded in the
+// background once the first page is idle, so the first switch doesn't wait on it.
+const MAIN_SECTIONS = ["/discover", "/community", "/stylist", "/closet", "/rentals", "/profile"] as const;
+
+function useWarmSections() {
+  const router = useRouter();
+  useEffect(() => {
+    const warm = () => {
+      for (const to of MAIN_SECTIONS) router.preloadRoute({ to }).catch(() => {});
+    };
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(warm);
+    else setTimeout(warm, 500);
+  }, [router]);
 }

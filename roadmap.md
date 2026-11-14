@@ -26,3 +26,4 @@
 - [x] Site-wide font swap (Victoria): bold, tight-tracked grotesque/sans (Helvetica Neue Bold / Neue Haas Grotesk / Inter Tight feel) replacing Cormorant Garamond everywhere
 - [x] Restore 4 missing clothing photos after import (Victoria)
 - [ ] Fix slow first navigation between sections (Kaixi): measure, preload, verify
+- [ ] Inside SisUse homepage tiles: replace images only (Cuimei brief)

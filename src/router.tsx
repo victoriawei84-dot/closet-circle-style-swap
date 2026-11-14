@@ -12,6 +12,8 @@ export const getRouter = () => {
     scrollRestoration: true,
     // Lets Query own freshness; set caching defaults on the QueryClient, not the router.
     defaultPreloadStaleTime: 0,
+    // Start downloading a section's page code on hover/touch, before the click.
+    defaultPreload: "intent",
   });
 
   return router;
