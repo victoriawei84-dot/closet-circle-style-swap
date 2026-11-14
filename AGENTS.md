@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- App state (favorites, soulmates, rentals, points, listings) lives in src/lib/store.tsx with localStorage and seed data in src/lib/data.ts — prototype without backend; migrate to Lovable Cloud tables when persistence/auth is added.
