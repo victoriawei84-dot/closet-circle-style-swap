@@ -8,6 +8,13 @@
       "when": 1794698129406,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794698248416,
+      "tag": "0001_restrict_profiles_select_to_owner",
+      "breakpoints": true
     }
   ]
 }
