@@ -7,14 +7,14 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover-sunny.jpg";
+import tileDiscover from "@/assets/tile-discover-sisters-city.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
 import tileCloset from "@/assets/tile-closet-sunny.jpg";
 import coat from "@/assets/pink-satin-coat.png.asset.json";
 import gown from "@/assets/olive-column-gown.png.asset.json";
 import knit from "@/assets/blush-oversized-knit.jpg.asset.json";
 import furMini from "@/assets/jacquard-fur-trim-mini.png.asset.json";
-import tryOn from "@/assets/tile-tryon-sunny.jpg";
+import tryOn from "@/assets/tile-tryon-paris-destination.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -22,13 +22,15 @@ export const Route = createFileRoute("/")({
     { name: "description", content: "Rent dresses, shoes and bags from stylish neighbors, get AI outfit picks for any occasion, and meet your Closet Soulmates." },
     { property: "og:title", content: "SisUse — Your sisterhood’s shared wardrobe" },
     { property: "og:description", content: "Local fashion rental, AI styling and a style-first community in one place." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Landing,
 });
 
 const collections = [
-  { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-[center_30%]", to: "/discover" },
-  { t: "AI Try-On", d: "Upload a photo — or stay face-free — and preview any piece on you before you ask to borrow it.", img: tryOn, fit: "object-[center_40%]", to: "/item/burgundy-zip" },
+  { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-center", scenic: true, alt: "Two women in coordinated full outfits walking across a Paris crosswalk", to: "/discover" },
+  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a sage blazer and jeans with the Eiffel Tower clearly visible", location: "Paris · Eiffel Tower", to: "/item/burgundy-zip" },
   { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, fit: "object-center", to: "/community" },
   { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-[40%_center]", to: "/closet" },
 ];
@@ -135,14 +137,15 @@ function Landing() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {collections.map((c) => (
-              <Link key={c.t} to={c.to as "/discover"} className="group relative block h-[420px] overflow-hidden md:h-[520px]">
-                <img src={c.img} alt={c.t} loading="lazy" width={896} height={1280} className={`h-full w-full object-cover ${c.fit} transition duration-700 group-hover:scale-105`} />
-                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-ink/60 via-ink/20 to-transparent" />
+              <Link key={c.t} to={c.to as "/discover"} className={`group relative block overflow-hidden ${c.scenic ? "aspect-[896/1600]" : "h-[420px] md:h-[520px]"}`}>
+                <img src={c.img} alt={c.alt ?? c.t} loading="lazy" width={896} height={c.scenic ? 1600 : 1280} className={`h-full w-full object-cover ${c.fit} transition duration-700 group-hover:scale-105`} />
+                <div className={`absolute inset-x-0 top-0 bg-gradient-to-b from-ink/60 via-ink/20 to-transparent ${c.scenic ? "h-[42%]" : "h-1/2"}`} />
                 <div className="absolute inset-x-6 top-6 md:inset-x-8 md:top-8">
                   <h3 className="font-display text-3xl text-ink-foreground md:text-4xl">{c.t}</h3>
                   <p className="mt-2 max-w-xs text-sm text-ink-foreground/85">{c.d}</p>
                   <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-ink-foreground/60 px-5 py-2 text-[12px] tracking-[-0.01em] text-ink-foreground transition group-hover:bg-ink-foreground group-hover:text-ink">Explore <ArrowUpRight className="h-3.5 w-3.5" /></span>
                 </div>
+                {c.location && <span className="absolute bottom-4 left-4 bg-ink/60 px-3 py-1.5 text-xs text-ink-foreground backdrop-blur-sm">{c.location}</span>}
               </Link>
             ))}
           </div>
