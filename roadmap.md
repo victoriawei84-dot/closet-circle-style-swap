@@ -31,5 +31,5 @@
 - [x] Expand demo inventory: 13 non-dress pieces, 2+ non-dress looks, community posts (Kaixi)
 - [x] Manage your closet tile: woman at home showing closet pieces on hangers (Cuimei)
 - [x] Restyle Discover, AI Try-On, Closet homepage tiles to match uploaded reference style (Victoria)
-- [ ] Copy current code to lufangchi/closet-circle using Fangchi's GitHub connection (explicitly requested by Fangchi)
-- [ ] Inside SisUse: two-woman street-style Discover, Paris landmark AI Try-On, updated copy/location label; preserve Community and home closet; verify desktop/mobile
+- [ ] Copy current code to lufangchi/closet-circle using Fangchi's GitHub connection — blocked: access unavailable and authorization card declined; no repository write performed
+- [x] Inside SisUse: two-woman street-style Discover, Paris landmark AI Try-On, updated copy/location label; preserve Community and home closet; verified desktop/mobile, 33 tests passed
