@@ -5,6 +5,7 @@ import type { FitProfile } from "./fit";
 import type { Block } from "./availability";
 import { seedOutings, type Outing } from "./outings";
 import { DEFAULT_STYLING, type StylingPrefs } from "./styling";
+import { markSanitized, clearOnReturn } from "./sanitize";
 import { supabase } from "@/integrations/supabase/client";
 import { ME, users, seedRentals, type Rental, type RentalStatus, type Item, items as seedItems, demoMyItems } from "./data";
 
@@ -16,7 +17,7 @@ type Ctx = State & {
   toggleFav: (id: string) => void; toggleSoulmate: (id: string) => void;
   requestRental: (r: Omit<Rental, "id" | "status" | "messages" | "renterId">) => string;
   setStatus: (id: string, s: RentalStatus) => void; sendMessage: (id: string, text: string) => void;
-  review: (id: string) => void; addItem: (i: Item) => void; setBlocks: (itemId: string, blocks: Block[]) => void; postRequest: (t: string) => void; allItems: Item[];
+  review: (id: string) => void; addItem: (i: Item) => void; setBlocks: (itemId: string, blocks: Block[]) => void; markSanitized: (itemId: string) => void; postRequest: (t: string) => void; allItems: Item[];
   allPosts: Post[]; earned: number; myCompleted: string[]; toggleLike: (id: string) => void; toggleSavePost: (id: string) => void; addPost: (p: Post) => void; skipPerson: (id: string) => void;
   authUser: { id: string; email: string } | null; authReady: boolean; profile: Profile | null; isDemo: boolean;
   updateProfile: (p: Profile) => Promise<string | null>; signOut: () => Promise<void>;
@@ -138,7 +139,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       set((p) => ({ ...p, points: p.points - (r.pointsUsed ?? 0), rentals: [{ ...r, id, renterId: ME, status: "Requested", messages: [] }, ...p.rentals] }));
       return id;
     },
-    setStatus: (id, status) => upd(id, (r) => ({ ...r, status })),
+    setStatus: (id, status) => set((p) => {
+      const r = p.rentals.find((x) => x.id === id);
+      return { ...p, rentals: p.rentals.map((x) => (x.id === id ? { ...x, status } : x)), myItems: r && status === "Returned" ? clearOnReturn(p.myItems, r.itemId) : p.myItems };
+    }),
+    markSanitized: (itemId) => set((p) => ({ ...p, myItems: markSanitized(p.myItems, itemId, new Date().toISOString().slice(0, 10)) })),
     sendMessage: (id, text) => upd(id, (r) => ({ ...r, messages: [...r.messages, { from: ME, text, at: "now" }] })),
     review: (id) => { upd(id, (r) => ({ ...r, reviewed: true })); set((p) => ({ ...p, points: p.points + 50 })); },
     setBlocks: (itemId, blocks) => set((p) => ({ ...p, myItems: p.myItems.map((i) => (i.id === itemId ? { ...i, blocks } : i)) })),

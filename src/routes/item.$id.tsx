@@ -1,3 +1,4 @@
+import { sanitizedLabel } from "@/lib/sanitize";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { BadgeCheck, ShieldCheck, Star, MapPin, Clock, Ruler, Info } from "lucide-react";
@@ -77,6 +78,7 @@ function ItemPage() {
           </div>
           <div className="rounded-2xl bg-muted p-4 text-muted-foreground">
             <p className="mb-2 font-medium text-foreground">Condition</p>
+            {sanitizedLabel(item) && <p className="mb-2 inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-xs text-accent-foreground"><ShieldCheck className="h-3 w-3" />{sanitizedLabel(item)}</p>}
             <p>{item.condition}</p><p>Flaws: {item.flaws}</p>{item.retail > 0 && <p>Original retail price ${item.retail}</p>}<p>Notice: {item.minNotice}</p>
           </div>
         </div>

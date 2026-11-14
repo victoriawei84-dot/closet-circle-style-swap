@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { CalendarOff, Lock, Pencil, Trash2 } from "lucide-react";
+import { CalendarOff, Lock, Pencil, ShieldCheck, Trash2 } from "lucide-react";
+import { needsSanitizing, sanitizedLabel } from "@/lib/sanitize";
 import { toast } from "sonner";
 import type { Item } from "@/lib/data";
 import { addDays, blockConflicts, fmt, today, type Block } from "@/lib/availability";
@@ -30,6 +31,8 @@ export function ClosetListing({ item }: { item: Item }) {
     toast.success(`Blocked ${fmt(st)}–${fmt(en)} for personal use`);
   };
 
+  const [confirmSan, setConfirmSan] = useState(false);
+  const san = sanitizedLabel(item);
   return (
     <div className="flex gap-4 rounded-2xl border border-border bg-card p-3">
       <Link to="/item/$id" params={{ id: item.id }}><img src={item.image} alt="" className="h-28 w-22 rounded-xl object-cover" style={{ width: 88 }} /></Link>
@@ -39,6 +42,18 @@ export function ClosetListing({ item }: { item: Item }) {
           <span className={"rounded-full px-2.5 py-0.5 text-xs " + (blockedNow ? "bg-secondary text-secondary-foreground" : "bg-accent text-accent-foreground")}>{blockedNow ? "Published · blocked now" : "Available"}</span>
         </div>
         <p className="text-xs text-muted-foreground">${item.dailyRate}/day · {item.care ?? "No care instructions"}</p>
+        {needsSanitizing(item) && (
+          <div className="space-y-2 text-xs">
+            {san ? <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-accent-foreground"><ShieldCheck className="h-3 w-3" />{san}</span>
+              : <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-muted-foreground">Not marked sanitized — renters won't see the label</span>}
+            {!confirmSan ? <div><button onClick={() => setConfirmSan(true)} className={btnGhost + " py-1.5"}><ShieldCheck className="h-4 w-4" />{san ? "Mark sanitized again" : "Mark as sanitized"}</button></div> : (
+              <div className="space-y-2 rounded-xl bg-muted/60 p-3">
+                <p>I confirm I sanitized this piece today and it's ready for the next renter.</p>
+                <div className="flex gap-2"><button onClick={() => { s.markSanitized(item.id); setConfirmSan(false); toast.success("Marked as sanitized"); }} className={btn + " py-1.5"}>Confirm</button><button onClick={() => setConfirmSan(false)} className={btnGhost + " py-1.5"}>Cancel</button></div>
+              </div>
+            )}
+          </div>
+        )}
         {active.map((b) => (
           <div key={b.id} className="flex items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1"><Lock className="h-3 w-3" />Personal use · {fmt(b.start)}–{fmt(b.end)}</span>

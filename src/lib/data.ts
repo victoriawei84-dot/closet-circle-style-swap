@@ -31,6 +31,8 @@ import clutch from "@/assets/item-satin-clutch.jpg";
 import scarf from "@/assets/item-silk-scarf.jpg";
 import belt from "@/assets/item-leather-belt.jpg";
 import hobo from "@/assets/item-suede-hobo.jpg";
+import pearlDrops from "@/assets/item-pearl-drops.jpg";
+import suedeBoots from "@/assets/item-suede-boots.jpg";
 
 export type User = {
   id: string; name: string; avatar: string; bio: string; zip: string; neighborhood: string;
@@ -42,6 +44,7 @@ export type Item = {
   occasions: string[]; styleTags: string[]; condition: string; flaws: string; distance: number;
   measurements: Record<string, string>; garment?: GarmentFit; gallery?: string[]; blockedDates: string[]; minNotice: string; description: string;
   /** Owner personal-use blocks (private label; public sees only "unavailable"). */ blocks?: Block[]; care?: string;
+  /** ISO date the lender last confirmed sanitizing (body-contact items only); cleared on return. */ sanitizedAt?: string;
 };
 export type RentalStatus = "Requested" | "Confirmed" | "Picked Up" | "Returned" | "Completed" | "Declined";
 export type Rental = {
@@ -94,6 +97,8 @@ const iso = (n: number) => { const d = new Date(); d.setUTCDate(d.getUTCDate() +
 export const demoMyItems: Item[] = [
   { id: "my-rose-satin", ownerId: ME, title: "Rose Satin Slip Dress", brand: "Réalisation Par", category: "Dress", size: "S", image: roseSatin, dailyRate: 24, deposit: 70, retail: 280, cleaningFee: 12, occasions: ["Date night", "Wedding", "Cocktail"], styleTags: ["Silk", "Romantic", "Minimal"], condition: "Excellent", flaws: "None noted", distance: 0, measurements: { Bust: "33 in", Waist: "27 in", Hips: "36 in", Length: "48 in" }, garment: { unit: "in", bust: 33, waist: 27, hips: 36, length: 48, stretch: "none", fit: "regular", confirmed: true }, blockedDates: [], blocks: [], minNotice: "1 day", care: "Dry clean only. Steam on low; do not wring.", description: "Bias-cut satin in dusty rose. Available — upcoming dates open." },
   { id: "my-sage-bag", ownerId: ME, title: "Sage Leather Shoulder Bag", brand: "Polène", category: "Bag", size: "One size", image: sageBag, dailyRate: 18, deposit: 120, retail: 0, cleaningFee: 0, occasions: ["Brunch", "Work", "Date night"], styleTags: ["Minimal", "Quiet luxury"], condition: "Like new", flaws: "None noted", distance: 0, measurements: { Width: "10 in", Height: "6 in" }, blockedDates: [], blocks: [{ id: "seed-block", start: iso(0), end: iso(6) }], minNotice: "1 day", care: "Wipe with a damp cloth; leather conditioner monthly. Leather specialist for stains.", description: "Smooth sage calf leather with a gold buckle." },
+  { id: "my-pearl-drops", ownerId: ME, title: "Freshwater Pearl Drop Earrings", brand: "Mejuri", category: "Jewelry", size: "One size", image: pearlDrops, dailyRate: 7, deposit: 40, retail: 0, cleaningFee: 0, occasions: ["Wedding", "Cocktail", "Date night", "Work"], styleTags: ["Romantic", "Minimal"], condition: "Excellent", flaws: "None noted", distance: 0, measurements: { Drop: "1 in", Closure: "Gold-plated hook" }, blockedDates: [], blocks: [], minNotice: "1 day", care: "Wiped with alcohol pads between rentals; store in pouch.", description: "Oval freshwater pearls on slim gold hooks.", sanitizedAt: "2026-11-14" },
+  { id: "my-suede-boots", ownerId: ME, title: "Tan Suede Block-Heel Ankle Boots", brand: "Everlane", category: "Shoes", size: "US 7.5", image: suedeBoots, dailyRate: 12, deposit: 60, retail: 0, cleaningFee: 0, occasions: ["Weekend", "Work", "Brunch"], styleTags: ["Minimal", "Vintage"], condition: "Very good", flaws: "Light creasing at toe", distance: 0, measurements: { Heel: "2 in", Fit: "True to size" }, blockedDates: [], blocks: [], minNotice: "1 day", care: "Insoles disinfected between rentals; suede brush only.", description: "Soft tan suede with a walkable stacked heel and side zip.", sanitizedAt: "2026-11-12" },
 ];
 
 export const seedRentals: Rental[] = [
