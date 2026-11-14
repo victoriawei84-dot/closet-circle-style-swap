@@ -7,14 +7,14 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover.jpg";
+import tileDiscover from "@/assets/tile-discover-street.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
-import tileCloset from "@/assets/tile-closet.jpg";
+import tileCloset from "@/assets/tile-closet-gallery.jpg";
 import coat from "@/assets/pink-satin-coat.png.asset.json";
 import gown from "@/assets/olive-column-gown.png.asset.json";
 import knit from "@/assets/blush-oversized-knit.jpg.asset.json";
 import furMini from "@/assets/jacquard-fur-trim-mini.png.asset.json";
-import tryOn from "@/assets/tile-tryon.jpg";
+import tryOn from "@/assets/tile-tryon-park.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -27,10 +27,10 @@ export const Route = createFileRoute("/")({
 });
 
 const collections = [
-  { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, to: "/discover" },
-  { t: "AI Try-On", d: "Upload a photo — or stay face-free — and preview any piece on you before you ask to borrow it.", img: tryOn, to: "/item/burgundy-zip" },
-  { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, to: "/community" },
-  { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, to: "/closet" },
+  { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-[center_30%]", to: "/discover" },
+  { t: "AI Try-On", d: "Upload a photo — or stay face-free — and preview any piece on you before you ask to borrow it.", img: tryOn, fit: "object-[center_40%]", to: "/item/burgundy-zip" },
+  { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, fit: "object-center", to: "/community" },
+  { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-[center_35%]", to: "/closet" },
 ];
 /** Popular-this-week collage: real outfit photos with mood tags (positions are % of the stage). */
 const popular = [
@@ -136,8 +136,8 @@ function Landing() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {collections.map((c) => (
               <Link key={c.t} to={c.to as "/discover"} className="group relative block h-[420px] overflow-hidden md:h-[520px]">
-                <img src={c.img} alt={c.t} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/10 to-transparent" />
+                <img src={c.img} alt={c.t} loading="lazy" width={896} height={1280} className={`h-full w-full object-cover ${c.fit} transition duration-700 group-hover:scale-105`} />
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-ink/60 via-ink/20 to-transparent" />
                 <div className="absolute inset-x-6 top-6 md:inset-x-8 md:top-8">
                   <h3 className="font-display text-3xl text-ink-foreground md:text-4xl">{c.t}</h3>
                   <p className="mt-2 max-w-xs text-sm text-ink-foreground/85">{c.d}</p>

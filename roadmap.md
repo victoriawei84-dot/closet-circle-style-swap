@@ -25,5 +25,5 @@
 - [x] Personal Styling in AI Stylist (Kaixi brief): optional private styling prefs (skin tone + undertone swatches with "Not sure", body shape from measurements or Skip, favorite colors/silhouette/coverage/fit), outfit builder from real listings (occasion, dates, ZIP, budget, owned pieces) → 2-3 ranked outfits with specific reasons, swap pieces, total price + pickup availability + listing links, actions Swap a piece / Preview on Me / Check Fit, save outfit; demo: wedding guest under $60, warm undertone, defined waist, owns cream heels → olive wrap dress + gold earrings, swap earrings updates total
 - [x] Site-wide font swap (Victoria): bold, tight-tracked grotesque/sans (Helvetica Neue Bold / Neue Haas Grotesk / Inter Tight feel) replacing Cormorant Garamond everywhere
 - [x] Restore 4 missing clothing photos after import (Victoria)
-- [ ] Fix slow first navigation between sections (Kaixi): measure, preload, verify
-- [ ] Inside SisUse homepage tiles: replace images only (Cuimei brief)
+- [x] Fix slow first navigation between sections (Kaixi): measure, preload, verify
+- [x] Inside SisUse homepage tiles: replace images only (Cuimei brief)
