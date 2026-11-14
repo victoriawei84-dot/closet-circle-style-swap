@@ -140,17 +140,16 @@ function RootComponent() {
 }
 
 // Main sections reached from the nav. Their page code is downloaded in the
-// background once the first page is idle, so the first switch doesn't wait on it.
-const MAIN_SECTIONS = ["/discover", "/community", "/stylist", "/closet", "/rentals", "/profile"] as const;
+// background after hydration, including home, so an immediate switch starts warm.
+const MAIN_SECTIONS = ["/", "/discover", "/community", "/stylist", "/closet", "/rentals", "/profile"] as const;
 
 function useWarmSections() {
   const router = useRouter();
   useEffect(() => {
-    const warm = () => {
-      for (const to of MAIN_SECTIONS) router.preloadRoute({ to }).catch(() => {});
-    };
-    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
-    if (w.requestIdleCallback) w.requestIdleCallback(warm);
-    else setTimeout(warm, 500);
+    for (const to of MAIN_SECTIONS) {
+      void router.preloadRoute({ to }).catch((error: unknown) => {
+        console.warn(`Could not preload ${to}`, error);
+      });
+    }
   }, [router]);
 }

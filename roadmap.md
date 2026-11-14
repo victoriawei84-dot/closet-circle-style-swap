@@ -33,3 +33,4 @@
 - [x] Restyle Discover, AI Try-On, Closet homepage tiles to match uploaded reference style (Victoria)
 - [ ] Copy current code to lufangchi/closet-circle using Fangchi's GitHub connection — blocked: access unavailable and authorization card declined; no repository write performed
 - [x] Inside SisUse: two-woman street-style Discover, Paris landmark AI Try-On, updated copy/location label; preserve Community and home closet; verified desktop/mobile, 33 tests passed
+- [x] Fix repeated page-switch lag: removed 400ms full-page fade, preload after hydration; local first Community visible 475→277ms, repeat 225→119ms; fully visible 668→277ms / 607→119ms; desktop/mobile links and Back verified, 33 tests passed

@@ -14,6 +14,7 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
     // Start downloading a section's page code on hover/touch, before the click.
     defaultPreload: "intent",
+    defaultPreloadDelay: 0,
   });
 
   return router;
