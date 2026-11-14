@@ -26,7 +26,7 @@ export const Route = createFileRoute("/stylist")({
 
 const OCCASIONS = ["Date", "Brunch", "Travel", "Party", "Everyday"];
 const STYLES = ["Minimal", "French", "Sweet", "Vintage", "Street", "Elegant"];
-const SLOT_LABEL: Record<Slot, string> = { main: "Outfit", bag: "Bag", shoes: "Shoes" };
+const SLOT_LABEL: Record<Slot, string> = { main: "Outfit", bottom: "Bottom", bag: "Bag", shoes: "Shoes", accessory: "Accessory" };
 const daysBetween = (a: string, b: string) => Math.max(1, Math.round((Date.parse(b) - Date.parse(a)) / 86400000) + 1);
 
 function Stylist() {

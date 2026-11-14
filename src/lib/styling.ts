@@ -134,9 +134,9 @@ const SHAPE_SIL: Record<string, string[]> = {
 /* ---------- the outfit request ---------- */
 
 export type LookRequest = { occasion: string; start: string; end: string; zip: string; budget: number; radius: number; days: number; size: string };
-export type Slot = "main" | "bag" | "shoes" | "jewelry";
-export const SLOT_LABEL: Record<Slot, string> = { main: "Outfit", bag: "Bag", shoes: "Shoes", jewelry: "Jewelry" };
-const SLOT_CATS: Record<Slot, Item["category"][]> = { main: ["Dress", "Suit", "Top", "Bottom"], bag: ["Bag"], shoes: ["Shoes"], jewelry: ["Jewelry"] };
+export type Slot = "main" | "bottom" | "bag" | "shoes" | "jewelry" | "accessory";
+export const SLOT_LABEL: Record<Slot, string> = { main: "Outfit", bottom: "Bottom", bag: "Bag", shoes: "Shoes", jewelry: "Jewelry", accessory: "Accessory" };
+const SLOT_CATS: Record<Slot, Item["category"][]> = { main: ["Dress", "Suit", "Top"], bottom: ["Bottom"], bag: ["Bag"], shoes: ["Shoes"], jewelry: ["Jewelry"], accessory: ["Accessory"] };
 
 export type LookPiece = { slot: Slot; item: Item; price: number; why: string; options: number };
 export type Look = { id: string; name: string; reason: string; pieces: LookPiece[]; total: number; missing: Slot[]; pickup: string; nextFree?: string };
@@ -147,7 +147,7 @@ const PALETTES = [
   { id: "soft-blush", name: "Soft blush", colors: ["blush", "cream", "gold", "white"] },
 ];
 
-const sizeOk = (i: Item, size: string) => !size || i.size === size || i.size === "One size" || i.category === "Shoes" || i.category === "Top" || i.category === "Jewelry";
+const sizeOk = (i: Item, size: string) => !size || i.size === size || i.size === "One size" || i.category === "Shoes" || i.category === "Top" || i.category === "Jewelry" || i.category === "Accessory";
 const covLabel: Record<Coverage, string> = { "show-skin": "a bit more skin", balanced: "balanced coverage", "more-coverage": "more coverage" };
 const fitLabel: Record<FitPref, string> = { fitted: "close to the body", regular: "true to size", relaxed: "easy and loose" };
 
@@ -201,14 +201,17 @@ export function buildLooks(pool: Item[], req: LookRequest, p: StylingPrefs, owne
     const missing: Slot[] = [];
     let spent = 0;
     let nextFree: string | undefined;
-    for (const slot of ["main", "jewelry", "bag", "shoes"] as Slot[]) {
+    for (const slot of ["main", "bottom", "jewelry", "bag", "shoes", "accessory"] as Slot[]) {
+      // Separates: a top needs a bottom; dresses and suits don't. Accessories are optional extras.
+      if (slot === "bottom" && pieces.find((x) => x.slot === "main")?.item.category !== "Top") continue;
+      const optional = slot === "accessory";
       const cands = eligible(slot, pool, req, p, shape, used, pal.colors);
-      if (!cands.length) { missing.push(slot); continue; }
+      if (!cands.length) { if (!optional) missing.push(slot); continue; }
       const start = picks[`${pal.id}:${slot}`] ?? 0;
       const ordered = [...cands.slice(start), ...cands.slice(0, start)];
       const pick = ordered.find((x) => spent + x.item.dailyRate * req.days <= req.budget);
       if (pick) { pieces.push({ slot, item: pick.item, price: pick.item.dailyRate * req.days, why: pick.why[0] ?? "", options: cands.length }); spent += pick.item.dailyRate * req.days; used.add(pick.item.id); }
-      else {
+      else if (!optional) {
         missing.push(slot);
         const nf = nextAvailable(ordered[0]!.item, req.start);
         if (nf > req.start && !nextFree) nextFree = nf;

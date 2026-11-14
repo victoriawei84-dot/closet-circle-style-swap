@@ -8,6 +8,9 @@ import lookFloral from "@/assets/look-floral-dolores.jpg";
 import lookBlush from "@/assets/look-blush-hallway.jpg";
 import lookAva from "@/assets/look-ava-satin.jpg";
 import lookAvaMaya from "@/assets/look-ava-maya-walk.jpg";
+import lookWork from "@/assets/look-work-blazer.jpg";
+import lookWeekend from "@/assets/look-weekend-cardigan.jpg";
+import lookSatinSkirt from "@/assets/look-satin-skirt-evening.jpg";
 
 export type PieceSource = "rented" | "closet";
 export type PieceTag = { itemId: string; source: PieceSource; rentalId?: string; /** Which person in the photo wore this piece. */ wornBy?: string };
@@ -38,9 +41,19 @@ export const communityRentals = [
   { id: "cr5", itemId: "burgundy-zip", renterId: "maya", status: "Completed" },
   { id: "cr7", itemId: "burgundy-jacket", renterId: "ava", status: "Completed" },
   { id: "cr8", itemId: "black-shoulder-bag", renterId: "maya", status: "Completed" },
+  { id: "cr9", itemId: "camel-blazer", renterId: "maya", status: "Completed" },
+  { id: "cr10", itemId: "wide-trousers", renterId: "maya", status: "Completed" },
+  { id: "cr11", itemId: "brown-loafers", renterId: "maya", status: "Completed" },
+  { id: "cr12", itemId: "suede-hobo", renterId: "ines", status: "Completed" },
+  { id: "cr13", itemId: "ballet-flats", renterId: "ines", status: "Completed" },
+  { id: "cr14", itemId: "burgundy-zip", renterId: "ava", status: "Completed" },
+  { id: "cr15", itemId: "block-heels", renterId: "ava", status: "Completed" },
 ];
 
 export const seedPosts: Post[] = [
+  { id: "p14", demo: true, userId: "maya", kind: "rented", rentalId: "cr9", image: lookWork, itemId: "camel-blazer", tags: [{ itemId: "camel-blazer", source: "rented", rentalId: "cr9" }, { itemId: "poplin-shirt", source: "rented" }, { itemId: "wide-trousers", source: "rented", rentalId: "cr10" }, { itemId: "leather-belt", source: "rented" }, { itemId: "brown-loafers", source: "rented", rentalId: "cr11" }, { itemId: "satin-clutch", source: "closet" }], place: "Salesforce Tower lobby · 94105", caption: "Work-event look, no dress needed: Lena's camel blazer, white poplin, wide-leg trousers, belt and loafers, plus my satin clutch. Every piece is rentable.", styleTags: ["Tailored", "Minimal", "Quiet luxury"], occasion: "Work event", review: { condition: 5, accuracy: 5, experience: 5 }, likes: 29, saves: 15 },
+  { id: "p15", demo: true, userId: "ines", kind: "rented", rentalId: "cr12", image: lookWeekend, itemId: "suede-hobo", tags: [{ itemId: "cream-cardigan", source: "closet" }, { itemId: "straight-jeans", source: "closet" }, { itemId: "suede-hobo", source: "rented", rentalId: "cr12" }, { itemId: "ballet-flats", source: "rented", rentalId: "cr13" }, { itemId: "silk-scarf", source: "rented" }], place: "Liberty Hill Victorians · 94110", caption: "Weekend photo walk: my cream cardigan and straight jeans with Ava's suede hobo and ballet flats, and Maya's paisley scarf. Comfy all afternoon.", styleTags: ["Vintage", "Boho", "Minimal"], occasion: "Photo walk", review: { condition: 5, accuracy: 5, experience: 5 }, likes: 24, saves: 13 },
+  { id: "p16", demo: true, userId: "ava", kind: "rented", rentalId: "cr14", image: lookSatinSkirt, itemId: "burgundy-zip", tags: [{ itemId: "burgundy-zip", source: "rented", rentalId: "cr14" }, { itemId: "satin-skirt", source: "closet" }, { itemId: "block-heels", source: "rented", rentalId: "cr15" }, { itemId: "satin-clutch", source: "rented" }, { itemId: "gold-hoops", source: "rented" }], place: "Hayes Valley wine bar · 94102", caption: "Date night in separates: Lena's burgundy half-zip tucked into my satin midi skirt, Maya's wine block heels, clutch and gold hoops.", styleTags: ["Silk", "Minimal", "Quiet luxury"], occasion: "Date night", review: { condition: 5, accuracy: 4, experience: 5 }, likes: 31, saves: 17 },
   { id: "p13", demo: true, userId: "ava", kind: "together", coAuthorId: "maya", coAuthorAccepted: true, outingId: "o1", image: lookAvaMaya, itemId: "burgundy-jacket", tags: [{ itemId: "burgundy-jacket", source: "rented", rentalId: "cr7", wornBy: "ava" }, { itemId: "black-shoulder-bag", source: "rented", rentalId: "cr8", wornBy: "maya" }], place: "Ritual Coffee, Valencia St · 94110", caption: "Saturday photo walk with Maya. I wore her burgundy wool jacket; she carried my black shoulder bag. Both pieces are up for rent.", styleTags: ["Vintage", "Minimal", "Quiet luxury"], occasion: "Photo walk", likes: 34, saves: 18 },
   { id: "p12", demo: true, userId: "ava", kind: "rented", rentalId: "cr6", image: lookAva, itemId: "champagne-satin", tags: [{ itemId: "champagne-satin", source: "rented", rentalId: "cr6" }, { itemId: "black-shoulder-bag", source: "closet" }], place: "Hayes Street · 94102", caption: "Maya's champagne satin slip with my black shoulder bag (you can rent it too!) and loafers. The satin is even prettier in person.", styleTags: ["Silk", "Minimal", "Quiet luxury"], occasion: "Brunch", review: { condition: 5, accuracy: 5, experience: 5 }, likes: 27, saves: 12 },
   { id: "p11", demo: true, userId: "maya", kind: "rented", rentalId: "cr5", image: lookBurgundy, itemId: "burgundy-zip", alsoTagged: ["crescent-bag"], place: "Home in Bernal Heights · 94110", caption: "Lena's burgundy half-zip with my green cable knit over the shoulders, a khaki wrap skirt and her crescent bag. Size M, roomy in the best way.", styleTags: ["Minimal", "Quiet luxury"], occasion: "Brunch", review: { condition: 5, accuracy: 5, experience: 5 }, likes: 23, saves: 9 },

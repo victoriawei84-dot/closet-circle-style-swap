@@ -16,7 +16,7 @@ export const Route = createFileRoute("/discover")({
   component: Discover,
 });
 
-const cats = ["All", "Dress", "Suit", "Bag", "Shoes"];
+const cats = ["All", "Dress", "Top", "Bottom", "Suit", "Shoes", "Bag", "Jewelry", "Accessory"];
 
 function Discover() {
   const { soulmates, allItems, postRequest, favorites, savedPosts, allPosts } = useStore();

@@ -28,15 +28,15 @@ export function getHotspots(place: string): { city: string; spots: Spot[] } {
 }
 
 export type Prefs = { occasion: string; style: string; size: string; budget: number; days: number; radius: number; start?: string; end?: string };
-export type Slot = "main" | "bag" | "shoes";
+export type Slot = "main" | "bottom" | "bag" | "shoes" | "accessory";
 export type Outfit = { slots: Partial<Record<Slot, Item>>; total: number; name: string; reason: string; missing: Slot[] };
 
 const OCC: Record<string, string[]> = { Date: ["Date night", "Cocktail"], Brunch: ["Brunch", "Garden party"], Travel: ["Brunch", "Weekend", "Work"], Party: ["Cocktail", "Gala", "Wedding"], "Everyday": ["Weekend", "Work", "Brunch"] };
 const STY: Record<string, string[]> = { Minimal: ["Minimal", "Tailored"], French: ["Silk", "Minimal", "Quiet luxury"], Sweet: ["Romantic"], Vintage: ["Vintage", "Boho"], Street: ["Tailored", "Minimal"], Elegant: ["Evening", "Silk", "Quiet luxury"] };
-const SLOT_CATS: Record<Slot, Item["category"][]> = { main: ["Dress", "Suit", "Top"], bag: ["Bag"], shoes: ["Shoes"] };
+const SLOT_CATS: Record<Slot, Item["category"][]> = { main: ["Dress", "Suit", "Top"], bottom: ["Bottom"], bag: ["Bag"], shoes: ["Shoes"], accessory: ["Accessory", "Jewelry"] };
 
 const blocked = (i: Item, p: Prefs) => !!p.start && !!p.end && isRangeBlocked(i, p.start, p.end);
-const sizeOk = (i: Item, p: Prefs) => !p.size || i.size === p.size || i.size === "One size" || i.category === "Shoes" || i.category === "Top";
+const sizeOk = (i: Item, p: Prefs) => !p.size || i.size === p.size || i.size === "One size" || i.category === "Shoes" || i.category === "Top" || i.category === "Accessory" || i.category === "Jewelry";
 
 /** Rentable candidates for a slot, best first. Only real listings. */
 export function candidates(slot: Slot, pool: Item[], p: Prefs): Item[] {
@@ -50,12 +50,14 @@ export function candidates(slot: Slot, pool: Item[], p: Prefs): Item[] {
 export function buildOutfit(pool: Item[], p: Prefs, pick: Partial<Record<Slot, number>> = {}): Outfit {
   const slots: Outfit["slots"] = {}; const missing: Slot[] = [];
   let spent = 0;
-  for (const slot of ["main", "bag", "shoes"] as Slot[]) {
+  for (const slot of ["main", "bottom", "bag", "shoes", "accessory"] as Slot[]) {
+    // Separates: a top needs a bottom; dresses and suits don't. Accessories are a bonus, never "missing".
+    if (slot === "bottom" && slots.main?.category !== "Top") continue;
     const c = candidates(slot, pool, p);
     const start = pick[slot] ?? 0;
     const ordered = [...c.slice(start), ...c.slice(0, start)];
     const it = ordered.find((i) => spent + i.dailyRate * p.days <= p.budget);
-    if (it) { slots[slot] = it; spent += it.dailyRate * p.days; } else missing.push(slot);
+    if (it) { slots[slot] = it; spent += it.dailyRate * p.days; } else if (slot !== "accessory") missing.push(slot);
   }
   const main = slots.main;
   const name = main ? `${p.style} ${p.occasion.toLowerCase()} — ${main.title.split(" ").slice(-2).join(" ").toLowerCase()}` : "No full look yet";
