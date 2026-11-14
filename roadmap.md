@@ -27,6 +27,6 @@
 - [x] Restore 4 missing clothing photos after import (Victoria)
 - [x] Fix slow first navigation between sections (Kaixi): measure, preload, verify
 - [x] Inside SisUse homepage tiles: replace images only (Cuimei brief)
-- [ ] Recolor Inside SisUse photos to match landing palette (Victoria)
+- [x] Recolor Inside SisUse photos to match landing palette (Victoria)
 - [x] Expand demo inventory: 13 non-dress pieces, 2+ non-dress looks, community posts (Kaixi)
-- [ ] Manage your closet tile: woman at home showing closet pieces on hangers (Cuimei)
+- [x] Manage your closet tile: woman at home showing closet pieces on hangers (Cuimei)

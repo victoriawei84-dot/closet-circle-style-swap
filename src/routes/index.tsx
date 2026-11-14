@@ -7,14 +7,14 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover-street.jpg";
+import tileDiscover from "@/assets/tile-discover-street-warm.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
-import tileCloset from "@/assets/tile-closet-gallery.jpg";
+import tileCloset from "@/assets/tile-closet-home.jpg";
 import coat from "@/assets/pink-satin-coat.png.asset.json";
 import gown from "@/assets/olive-column-gown.png.asset.json";
 import knit from "@/assets/blush-oversized-knit.jpg.asset.json";
 import furMini from "@/assets/jacquard-fur-trim-mini.png.asset.json";
-import tryOn from "@/assets/tile-tryon-park.jpg";
+import tryOn from "@/assets/tile-tryon-park-warm.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -30,7 +30,7 @@ const collections = [
   { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-[center_30%]", to: "/discover" },
   { t: "AI Try-On", d: "Upload a photo — or stay face-free — and preview any piece on you before you ask to borrow it.", img: tryOn, fit: "object-[center_40%]", to: "/item/burgundy-zip" },
   { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, fit: "object-center", to: "/community" },
-  { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-[center_35%]", to: "/closet" },
+  { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-[40%_center]", to: "/closet" },
 ];
 /** Popular-this-week collage: real outfit photos with mood tags (positions are % of the stage). */
 const popular = [
