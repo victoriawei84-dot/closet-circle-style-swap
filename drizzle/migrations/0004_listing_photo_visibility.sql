@@ -1,0 +1,3 @@
+DROP POLICY "Listing photos public read" ON storage.objects;
+CREATE POLICY "Visible listing photos" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'listing-photos' AND ((storage.foldername(name))[1] = auth.uid()::text OR EXISTS (SELECT 1 FROM public.listings l WHERE l.photo_path = name AND l.published) OR EXISTS (SELECT 1 FROM public.listings l JOIN public.rental_requests r ON r.listing_id = l.id WHERE l.photo_path = name AND auth.uid() IN (r.renter_id,r.owner_id))));
+CREATE POLICY "Rental participants read linked listing" ON public.listings FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.rental_requests r WHERE r.listing_id = listings.id AND auth.uid() IN (r.renter_id,r.owner_id)));

@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { users, compatibility, getUser, ME } from "@/lib/data";
 import { sharedStyleReasons, tasteTags } from "@/lib/community";
 import { useStore } from "@/lib/store";
@@ -6,12 +6,13 @@ import { Avatar, ItemCard, btn, btnGhost } from "@/components/ui-kit";
 import { MakePlanButton } from "@/components/invite";
 
 export const Route = createFileRoute("/user/$id")({
-  loader: ({ params }) => { const u = users.find((x) => x.id === params.id); if (!u) throw notFound(); return { name: u.name, bio: u.bio }; },
+  loader: ({ params }) => { const u = users.find((x) => x.id === params.id); return { name: u?.name ?? "Member", bio: u?.bio ?? "SisUse member closet" }; },
   head: ({ loaderData }) => ({ meta: [
     { title: `${loaderData?.name ?? "Closet"}'s closet — SisUse` },
     { name: "description", content: loaderData?.bio ?? "A neighborhood closet." },
     { property: "og:title", content: `${loaderData?.name ?? "Closet"}'s closet` },
     { property: "og:description", content: loaderData?.bio ?? "A neighborhood closet." },
+    { property: "og:type", content: "profile" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: Profile,
 });
@@ -42,6 +43,8 @@ function Profile() {
       </div>
       <h2 className="text-3xl">Closet · {mine.length} pieces</h2>
       <div className="columns-2 gap-4 md:columns-4">{mine.map((i) => <ItemCard key={i.id} item={i} />)}</div>
+      <h2 className="text-3xl">Community looks</h2>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">{s.allPosts.filter((post) => post.userId === id || post.coAuthorId === id).map((post) => <Link key={post.id} to="/community-post/$id" params={{ id: post.id }} className="space-y-2"><img src={post.image} alt={post.caption} className="aspect-[3/4] w-full rounded-lg object-cover" loading="lazy" /><p className="text-sm">{post.caption}</p></Link>)}</div>
     </div>
   );
 }

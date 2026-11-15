@@ -82,7 +82,7 @@ function Community() {
   );
 }
 
-function PostCard({ p }: { p: Post }) {
+export function PostCard({ p }: { p: Post }) {
   const s = useStore();
   const u = getUser(p.userId);
   const find = (id: string) => getItem(id) ?? s.allItems.find((i) => i.id === id);

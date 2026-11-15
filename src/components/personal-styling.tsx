@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bookmark, Lock, MapPin, Repeat, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { useStore } from "@/lib/store";
 import { FitCheckCard, PreviewOnMe } from "@/components/preview-on-me";
 import { Avatar, Chip, btn, btnGhost, input } from "@/components/ui-kit";
 import { cn } from "@/lib/utils";
+import { useStylistDraft } from "@/lib/stylist-draft";
 import {
   BODY_SHAPES, COVERAGE_OPTS, COLOR_FAMILIES, FIT_OPTS, SKIN_TONES, SILHOUETTES, SLOT_LABEL, UNDERTONES,
   buildLooks, type Coverage, type LookRequest, type Slot, type StylingPrefs,
@@ -33,18 +34,19 @@ function Field({ label, note, children }: { label: string; note?: string; childr
 
 export function PersonalStyling() {
   const s = useStore();
-  const [prefs, setPrefs] = useState<StylingPrefs>(s.styling.colors.length || s.styling.undertone ? s.styling : DEMO_PREFS);
+  const scope = `${s.authUser?.id ?? "guest"}:personal`;
+  const [prefs, setPrefs] = useStylistDraft<StylingPrefs>(scope, "prefs", s.styling.colors.length || s.styling.undertone ? s.styling : DEMO_PREFS);
   const save = (p: StylingPrefs) => { setPrefs(p); s.setStyling(p); };
-  const [occ, setOcc] = useState("Wedding");
-  const [start, setStart] = useState(iso(1));
-  const [end, setEnd] = useState(iso(1));
-  const [zip, setZip] = useState("94110");
-  const [budget, setBudget] = useState(60);
-  const [radius, setRadius] = useState(3);
-  const [owned, setOwnedList] = useState<string[]>(s.ownedPieces.length ? s.ownedPieces : ["cream heels"]);
-  const [ownInput, setOwnInput] = useState("");
-  const [picks, setPicks] = useState<Partial<Record<string, number>>>({});
-  const [open, setOpen] = useState<Record<string, "preview" | "fit" | null>>({});
+  const [occ, setOcc] = useStylistDraft(scope, "occ", "Wedding");
+  const [start, setStart] = useStylistDraft(scope, "start", iso(1));
+  const [end, setEnd] = useStylistDraft(scope, "end", iso(1));
+  const [zip, setZip] = useStylistDraft(scope, "zip", "94110");
+  const [budget, setBudget] = useStylistDraft(scope, "budget", 60);
+  const [radius, setRadius] = useStylistDraft(scope, "radius", 3);
+  const [owned, setOwnedList] = useStylistDraft<string[]>(scope, "owned", s.ownedPieces.length ? s.ownedPieces : ["cream heels"]);
+  const [ownInput, setOwnInput] = useStylistDraft(scope, "ownInput", "");
+  const [picks, setPicks] = useStylistDraft<Partial<Record<string, number>>>(scope, "picks", {});
+  const [open, setOpen] = useStylistDraft<Record<string, "preview" | "fit" | null>>(scope, "open", {});
 
   const days = daysBetween(start, end);
   const req: LookRequest = { occasion: occ, start, end, zip, budget, radius, days, size: getUser(ME).size };
@@ -206,9 +208,9 @@ export function PersonalStyling() {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {look.pieces.map((pc) => (
                 <div key={pc.slot} className="space-y-2 rounded-2xl border border-border p-3">
-                  <img src={pc.item.image} alt={pc.item.title} loading="lazy" width={1024} height={1280} className="aspect-[3/4] w-full rounded-xl object-cover" />
+                  <Link to="/item/$id" params={{ id: pc.item.id }}><img src={pc.item.image} alt={pc.item.title} loading="lazy" width={1024} height={1280} className="aspect-[3/4] w-full rounded-xl object-cover" /></Link>
                   <p className="text-[11px] text-muted-foreground">{SLOT_LABEL[pc.slot]}</p>
-                  <p className="text-sm font-medium leading-tight">{pc.item.title}</p>
+                  <Link to="/item/$id" params={{ id: pc.item.id }} className="block text-sm font-medium leading-tight hover:underline">{pc.item.title}</Link>
                   <p className="text-xs text-muted-foreground">${pc.item.dailyRate}/day · ${pc.price} for {days} {days === 1 ? "day" : "days"}</p>
                   {pc.why && <p className="text-xs text-sage">{pc.why}</p>}
                   <Link to="/user/$id" params={{ id: pc.item.ownerId }} className="flex items-center gap-2 text-xs"><Avatar id={pc.item.ownerId} size={20} />{getUser(pc.item.ownerId).name}</Link>

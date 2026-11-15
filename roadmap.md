@@ -1,5 +1,17 @@
 # Roadmap
 
+- [x] Make all four Inside SisUse photos identical in display size and portrait format without shrinking them.
+
+- [x] Shared listings/photo storage and persistent private requests, server ownership/date/pricing/booking rules; existing screens connected, no payments.
+- [ ] Verify real owner/renter flow — blocked: no requesting-user account/session; needs owner and renter signed in through preview.
+
+- [x] Fix phone homepage photo/text overlap without changing images or making them smaller.
+
+- [x] Match three homepage photos to Community's soft saturated film style; keep faces clear.
+- [x] Add AI Stylist item/owner/post links, similar looks, AI-only attribution and preserved session return state; optional Try this look not added.
+- [x] Check whether two signed-in users can share uploads and rental requests — previously local-only; shared storage now connected, two-account flow awaits verification.
+- [x] Refine SisUse logo with Instrument Serif regular/italic across headers and footer; preserve interface fonts.
+
 - [x] Luxury typography (Cormorant Garamond + Karla)
 - [x] Landing page (Athléna layout)
 - [x] Community: worn-outfit photos, demo labels, extra tagged pieces

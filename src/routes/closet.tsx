@@ -15,6 +15,7 @@ export const Route = createFileRoute("/closet")({
     { name: "description", content: "List your clothes, shoes and accessories for neighbors to rent." },
     { property: "og:title", content: "My Closet — SisUse" },
     { property: "og:description", content: "Manage your listings, availability and saved looks." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: Closet,
 });
@@ -34,14 +35,14 @@ function Closet() {
 
   const onFile = (file?: File) => { if (!file) return; const r = new FileReader(); r.onload = () => setImg(r.result as string); r.readAsDataURL(file); };
   const suggest = () => { setAi(true); setTimeout(() => { setF({ ...f, title: f.title || "Satin Midi Dress", category: "Dress", description: "Fluid satin midi with a flattering bias cut — perfect for weddings and evening events.", tags: "Silk, Minimal, Evening" }); setAi(false); toast("Suggestions added — please verify measurements yourself"); }, 800); };
-  const submit = () => {
+  const submit = async () => {
     if (!f.title || !img || !verified) return;
-    addItem({ id: "my-" + Date.now(), ownerId: ME, title: f.title, brand: f.brand || "Unbranded", category: f.category, size: f.size, image: img, dailyRate: +f.dailyRate, deposit: +f.deposit, retail: +f.retail, cleaningFee: +f.cleaningFee,
+    try { await addItem({ id: "my-" + Date.now(), ownerId: ME, title: f.title, brand: f.brand || "Unbranded", category: f.category, size: f.size, image: img, dailyRate: +f.dailyRate, deposit: +f.deposit, retail: +f.retail, cleaningFee: +f.cleaningFee,
       occasions: ["Wedding", "Cocktail"], styleTags: f.tags.split(",").map((t) => t.trim()).filter(Boolean), condition: f.condition, flaws: f.flaws || "None noted", distance: 0,
       measurements: Object.fromEntries(fields.filter((k) => f[k]).map((k) => [k[0]!.toUpperCase() + k.slice(1), `${f[k]} ${f.unit}`])),
       ...(fields.length ? { garment: { unit: f.unit, stretch: f.stretch, fit: f.fit, confirmed: true, ...Object.fromEntries(fields.filter((k) => +f[k] > 0).map((k) => [k, +f[k]])) } as GarmentFit } : {}),
       blockedDates: [], minNotice: f.minNotice, description: f.description });
-    setF(empty); setImg(""); setVerified(false); toast.success("Listed in your closet");
+    setF(empty); setImg(""); setVerified(false); toast.success("Listed in your closet"); } catch (e) { toast.error(e instanceof Error ? e.message : "Listing could not be saved"); }
   };
   const fields = garmentFields[f.category] ?? [];
   const saved = allItems.filter((i) => favorites.includes(i.id));

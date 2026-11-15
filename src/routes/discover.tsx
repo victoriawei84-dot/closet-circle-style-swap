@@ -12,6 +12,7 @@ export const Route = createFileRoute("/discover")({
     { name: "description", content: "Find outfits for any occasion from closets in your neighborhood." },
     { property: "og:title", content: "Discover looks nearby — SisUse" },
     { property: "og:description", content: "AI-inspired outfit picks from neighbors' closets." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: Discover,
 });
@@ -30,7 +31,7 @@ function Discover() {
   const [req, setReq] = useState("");
 
   const run = () => { setLoading(true); setResults(null); setTimeout(() => { setResults(recommend(q, { soulmates, favorites, savedPostItems }, allItems).slice(0, 3)); setLoading(false); }, 900); };
-  const filtered = useMemo(() => allItems.filter((i) => (cat === "All" || i.category === cat) && i.distance <= maxDist && i.dailyRate <= maxPrice), [allItems, cat, maxDist, maxPrice]);
+const filtered = useMemo(() => allItems.filter((i) => (!i.real || i.published) && (cat === "All" || i.category === cat) && i.distance <= maxDist && i.dailyRate <= maxPrice), [allItems, cat, maxDist, maxPrice]);
   const fromSoulmates = allItems.filter((i) => soulmates.includes(i.ownerId));
 
   return (

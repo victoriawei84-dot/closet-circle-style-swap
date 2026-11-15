@@ -31,10 +31,10 @@ export function nextAction(r: Rental, lending: boolean): string {
 }
 
 function Rentals() {
-  const { rentals, allItems } = useStore();
+  const { rentals, allItems, authUser } = useStore();
   const [tab, setTab] = useState<"borrow" | "lend">("borrow");
-  const borrowing = rentals.filter((r) => r.renterId === ME);
-  const lending = rentals.filter((r) => r.ownerId === ME);
+  const borrowing = rentals.filter((r) => r.renterId === (authUser?.id ?? ME));
+  const lending = rentals.filter((r) => r.ownerId === (authUser?.id ?? ME));
   const list = tab === "borrow" ? borrowing : lending;
   const pending = lending.filter((r) => r.status === "Requested").length;
   return (
@@ -50,7 +50,8 @@ function Rentals() {
         const i = allItems.find((x) => x.id === r.itemId) ?? getItem(r.itemId);
         if (!i) return null;
         const other = getUser(tab === "borrow" ? r.ownerId : r.renterId);
-        const p = priceRental(i, r.start, r.end, r.pointsUsed ?? 0);
+        const computed = priceRental(i, r.start, r.end, r.pointsUsed ?? 0);
+        const p = r.agreedPrice ? { ...computed, total: r.agreedPrice.total, rental: r.agreedPrice.dailyRate * computed.days } : computed;
         return (
           <Link key={r.id} to="/rentals/$id" params={{ id: r.id }} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-3 transition hover:shadow-soft">
             <img src={i.image} alt="" className="h-20 w-16 rounded-xl object-cover" />

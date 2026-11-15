@@ -1,16 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Camera, EyeOff, Loader2, MapPin, RefreshCw, Repeat, Bookmark, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { getUser } from "@/lib/data";
+import { getUser, type Item } from "@/lib/data";
 import { useStore } from "@/lib/store";
 import { getHotspots, buildOutfit, candidates, type Prefs, type Slot, type Spot } from "@/lib/stylist";
-import { taggedIds } from "@/lib/community";
 import { streamImage } from "@/lib/stream-image";
 import { toBlob } from "@/components/preview-on-me";
 import { Avatar, Chip, btn, btnGhost, input } from "@/components/ui-kit";
 import { PersonalStyling } from "@/components/personal-styling";
 import { cn } from "@/lib/utils";
+import { useStylistDraft } from "@/lib/stylist-draft";
+import { similarCommunityLooks } from "@/lib/stylist-community";
 
 export const Route = createFileRoute("/stylist")({
   head: () => ({ meta: [
@@ -31,51 +32,55 @@ const daysBetween = (a: string, b: string) => Math.max(1, Math.round((Date.parse
 
 function Stylist() {
   const s = useStore();
-  const [place, setPlace] = useState("San Francisco");
-  const [{ city, spots }, setHot] = useState(() => getHotspots("San Francisco"));
-  const [spot, setSpot] = useState<Spot | null>(spots[0]!);
-  const [customScene, setCustomScene] = useState("");
-  const [occasion, setOccasion] = useState("Brunch");
-  const [style, setStyle] = useState("Minimal");
-  const [start, setStart] = useState("2026-11-20");
-  const [end, setEnd] = useState("2026-11-21");
-  const [size, setSize] = useState("S");
-  const [budget, setBudget] = useState(150);
-  const [radius, setRadius] = useState(3);
-  const [mode, setMode] = useState<"photo" | "noface">("noface");
-  const [photo, setPhoto] = useState<File | null>(null);
-  const [consent, setConsent] = useState(false);
-  const [poseRef, setPoseRef] = useState<File | null>(null);
-  const [pick, setPick] = useState<Partial<Record<Slot, number>>>({});
-  const [img, setImg] = useState(""); const [final, setFinal] = useState(false);
-  const [busy, setBusy] = useState(false); const [err, setErr] = useState("");
-  const [step, setStep] = useState(1); // mobile stepper
-  const [tab, setTab] = useState<"preview" | "personal">("preview");
+  const scope = s.authUser?.id ?? "guest";
+  const [place, setPlace] = useStylistDraft(scope, "place", "San Francisco");
+  const [{ city, spots }, setHot] = useStylistDraft(scope, "hotspots", () => getHotspots("San Francisco"));
+  const [spot, setSpot] = useStylistDraft<Spot | null>(scope, "spot", spots[0] ?? null);
+  const [customScene, setCustomScene] = useStylistDraft(scope, "customScene", "");
+  const [occasion, setOccasion] = useStylistDraft(scope, "occasion", "Brunch");
+  const [style, setStyle] = useStylistDraft(scope, "style", "Minimal");
+  const [start, setStart] = useStylistDraft(scope, "start", "2026-11-20");
+  const [end, setEnd] = useStylistDraft(scope, "end", "2026-11-21");
+  const [size, setSize] = useStylistDraft(scope, "size", "S");
+  const [budget, setBudget] = useStylistDraft(scope, "budget", 150);
+  const [radius, setRadius] = useStylistDraft(scope, "radius", 3);
+  const [mode, setMode] = useStylistDraft<"photo" | "noface">(scope, "mode", "noface");
+  const [photo, setPhoto] = useStylistDraft<File | null>(scope, "photo", null);
+  const [consent, setConsent] = useStylistDraft(scope, "consent", false);
+  const [poseRef, setPoseRef] = useStylistDraft<File | null>(scope, "poseRef", null);
+  const [pick, setPick] = useStylistDraft<Partial<Record<Slot, number>>>(scope, "pick", {});
+  const [img, setImg] = useStylistDraft(scope, "img", ""); const [final, setFinal] = useStylistDraft(scope, "final", false);
+  const [busy, setBusy] = useStylistDraft(scope, "busy", false); const [err, setErr] = useStylistDraft(scope, "err", "");
+  const [step, setStep] = useStylistDraft(scope, "step", 1); // mobile stepper
+  const [tab, setTab] = useStylistDraft<"preview" | "personal">(scope, "tab", "preview");
 
   const prefs: Prefs = { occasion, style, size, budget, radius, start, end, days: daysBetween(start, end) };
   const outfit = useMemo(() => buildOutfit(s.allItems, prefs, pick), [s.allItems, occasion, style, size, budget, radius, start, end, pick]);
-  const pieces = (Object.entries(outfit.slots) as [Slot, NonNullable<(typeof outfit.slots)[Slot]>][]);
-  const inspiration = s.allPosts.filter((p) => pieces.some(([, i]) => taggedIds(p).includes(i.id)));
+  const [generatedPieces, setGeneratedPieces] = useStylistDraft<[Slot, Item][]>(scope, "generatedPieces", []);
+  const selectedPieces = (Object.entries(outfit.slots) as [Slot, NonNullable<(typeof outfit.slots)[Slot]>][]);
+  const pieces = img && generatedPieces.length ? generatedPieces : selectedPieces;
   const scene = customScene.trim() || (spot ? `${spot.name}, ${spot.area}` : place);
+  const inspiration = similarCommunityLooks(s.allPosts, pieces.map(([, item]) => item), style, scene);
   const pose = spot?.pose ?? "Relaxed walking pose";
   const noFace = mode === "noface" || !photo || !consent;
 
-  const search = () => { const h = getHotspots(place); setHot(h); setSpot(h.spots[0]!); };
+  const search = () => { const h = getHotspots(place); setHot(h); setSpot(h.spots[0] ?? null); };
   const swap = (slot: Slot) => {
     const n = candidates(slot, s.allItems, prefs).length;
     if (n < 2) { toast("No other matching piece for this slot right now"); return; }
     setPick({ ...pick, [slot]: ((pick[slot] ?? 0) + 1) % n });
   };
   const generate = async () => {
-    if (!pieces.length) return;
+    if (!selectedPieces.length) return;
+    setGeneratedPieces(selectedPieces);
     setBusy(true); setErr(""); setImg(""); setFinal(false);
     try {
       const fd = new FormData();
-      for (const [, i] of pieces) fd.append("item", new File([await toBlob(i.image)], `${i.id}.jpg`, { type: "image/jpeg" }));
+      for (const [, i] of selectedPieces) fd.append("item", new File([await toBlob(i.image)], `${i.id}.jpg`, { type: "image/jpeg" }));
       if (!noFace && photo) fd.append("person", photo);
       if (poseRef) fd.append("pose", poseRef);
       if (spot && !customScene.trim()) fd.append("sceneImage", new File([await toBlob(spot.image)], "scene.jpg", { type: "image/jpeg" }));
-      fd.append("titles", pieces.map(([, i]) => i.title).join(", "));
+      fd.append("titles", selectedPieces.map(([, i]) => i.title).join(", "));
       fd.append("scene", scene); fd.append("poseText", pose);
       await streamImage("/api/stylist-look", fd, (u, f) => { setImg(u); setFinal(f); });
       setStep(3);
@@ -152,11 +157,12 @@ function Stylist() {
                 <a key={slot} href={`#piece-${i.id}`} title={i.title} className="grid h-8 w-8 place-items-center rounded-full bg-card/90 text-xs font-medium shadow-soft">{n + 1}</a>))}</div>}
             </figure>
             <div className="space-y-3">
+              <p className="text-xs text-muted-foreground">Styled by SisUse AI</p>
               <p className="font-display text-3xl capitalize">{outfit.name}</p>
               <p className="text-sm text-muted-foreground">{outfit.reason}</p>
               <p className="flex items-start gap-1 text-sm"><MapPin className="mt-0.5 h-4 w-4 shrink-0" />{scene}</p>
               <p className="text-sm text-muted-foreground">Pose: {pose}</p>
-              <p className="flex justify-between border-t border-border pt-3 text-sm"><span>Rental total · {prefs.days} {prefs.days === 1 ? "day" : "days"}</span><b>${outfit.total}</b></p>
+              <p className="flex justify-between border-t border-border pt-3 text-sm"><span>Rental total · {prefs.days} {prefs.days === 1 ? "day" : "days"}</span><b>${pieces.reduce((total, [, item]) => total + item.dailyRate * prefs.days, 0)}</b></p>
               <p className="text-[11px] text-muted-foreground">Before deposits and cleaning fees. Availability is confirmed by each owner — nothing is booked yet.</p>
               <div className="grid gap-2">
                 <button onClick={generate} disabled={busy || !pieces.length} className={btn}>{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : img ? <RefreshCw className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}{img ? "Regenerate" : "Generate look"}</button>
@@ -173,8 +179,8 @@ function Stylist() {
             const owner = getUser(i.ownerId);
             return (
               <div key={slot} id={`piece-${i.id}`} className="space-y-2 rounded-2xl border border-border bg-card p-3">
-                <div className="flex gap-3"><img src={i.image} alt={i.title} className="h-24 w-20 rounded-xl object-cover" loading="lazy" />
-                  <div className="min-w-0 text-sm"><p className="text-xs text-muted-foreground">{n + 1} · {SLOT_LABEL[slot]}</p><p className="font-medium leading-tight">{i.title}</p><p className="text-xs text-muted-foreground">Size {i.size} · ${i.dailyRate}/day</p></div></div>
+                <div className="flex gap-3"><Link to="/item/$id" params={{ id: i.id }} aria-label={`View ${i.title}`}><img src={i.image} alt={i.title} className="h-24 w-20 rounded-xl object-cover" loading="lazy" /></Link>
+                  <div className="min-w-0 text-sm"><p className="text-xs text-muted-foreground">{n + 1} · {SLOT_LABEL[slot]}</p><Link to="/item/$id" params={{ id: i.id }} className="block font-medium leading-tight hover:underline">{i.title}</Link><p className="text-xs text-muted-foreground">Size {i.size} · ${i.dailyRate}/day</p></div></div>
                 <Link to="/user/$id" params={{ id: owner.id }} className="flex items-center gap-2 text-xs"><Avatar id={owner.id} size={22} />Owner · {owner.name}</Link>
                 <div className="flex gap-2 text-xs">
                   <Link to="/item/$id" params={{ id: i.id }} className="rounded-full border border-border px-3 py-1">View item</Link>
@@ -186,13 +192,14 @@ function Stylist() {
 
           {inspiration.length > 0 && (
             <div className="space-y-3">
-              <p className="font-display text-3xl">Community styling inspiration</p>
+              <p className="font-display text-3xl">Explore similar community looks</p>
               <p className="text-xs text-muted-foreground">Real posts from neighbors who wore these pieces — separate from the AI look above.</p>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">{inspiration.slice(0, 4).map((p) => (
-                <Link key={p.id} to="/community" className="block overflow-hidden rounded-2xl border border-border bg-card">
+                <article key={p.id} className="overflow-hidden rounded-lg border border-border bg-card">
+                <Link to="/community-post/$id" params={{ id: p.id }} aria-label={`Open look by ${getUser(p.userId).name}`}>
                   <img src={p.image} alt={p.caption} className="aspect-[3/4] w-full object-cover" loading="lazy" />
-                  <p className="p-2 text-xs">Styled by {getUser(p.userId).name}{p.demo ? " · demo" : ""}</p>
-                </Link>))}</div>
+                  </Link><Link to="/user/$id" params={{ id: p.userId }} className="flex items-center gap-2 p-2 text-xs"><Avatar id={p.userId} size={24} />{getUser(p.userId).name}{p.demo ? " · demo" : ""}</Link>
+                </article>))}</div>
             </div>
           )}
         </section>

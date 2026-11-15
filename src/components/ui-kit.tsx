@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { getUser, type Item } from "@/lib/data";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand-logo";
 
 const tabs = [
   { to: "/discover", label: "Discover", icon: Compass },
@@ -22,7 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen pb-24 md:pb-0">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link to="/" className="font-display text-2xl tracking-normal">Sis<em className="text-sage">Use</em></Link>
+          <Link to="/" aria-label="SisUse home"><BrandLogo /></Link>
           <nav className="hidden gap-1 md:flex">
             {tabs.map((t) => (
               <Link key={t.to} to={t.to} className={cn("rounded-full px-4 py-2 text-sm transition", active(t.to) ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted")}>{t.label}</Link>

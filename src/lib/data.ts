@@ -39,6 +39,7 @@ export type User = {
   styleTags: string[]; size: string; rating: number; reviews: number; responseRate: number; responseTime: string; points: number;
 };
 export type Item = {
+  real?: boolean; published?: boolean; photoPath?: string;
   id: string; ownerId: string; title: string; brand: string; category: "Dress" | "Top" | "Bottom" | "Bag" | "Shoes" | "Suit" | "Jewelry" | "Accessory";
   size: string; image: string; dailyRate: number; deposit: number; /** Owner-provided purchase price; 0 = not provided. */ retail: number; cleaningFee: number;
   occasions: string[]; styleTags: string[]; condition: string; flaws: string; distance: number;
@@ -48,6 +49,7 @@ export type Item = {
 };
 export type RentalStatus = "Requested" | "Confirmed" | "Picked Up" | "Returned" | "Completed" | "Declined";
 export type Rental = {
+  real?: boolean; agreedPrice?: { dailyRate: number; cleaning: number; deposit: number; total: number }; createdAt?: string; updatedAt?: string;
   id: string; itemId: string; renterId: string; ownerId: string; start: string; end: string; status: RentalStatus;
   pickup: string; messages: { from: string; text: string; at: string }[]; reviewed?: boolean; pointsUsed?: number;
 };
@@ -109,7 +111,12 @@ export const seedRentals: Rental[] = [
 ];
 
 
-export const getUser = (id: string) => users.find((u) => u.id === id)!;
+const members = new Map<string, User>();
+export function registerMember(id: string, name: string, neighborhood = "", zip = "") {
+  const previous = members.get(id);
+  members.set(id, { id, name, neighborhood: neighborhood || previous?.neighborhood || "", zip: zip || previous?.zip || "", avatar: "", bio: "", styleTags: [], size: "", rating: 0, reviews: 0, responseRate: 0, responseTime: "Not yet available", points: 0 });
+}
+export const getUser = (id: string): User => users.find((u) => u.id === id) ?? members.get(id) ?? { id, name: "Member", avatar: "", bio: "", zip: "", neighborhood: "", styleTags: [], size: "", rating: 0, reviews: 0, responseRate: 0, responseTime: "Not yet available", points: 0 };
 export const getItem = (id: string) => items.find((i) => i.id === id) ?? demoMyItems.find((i) => i.id === id);
 
 /** Style compatibility: % overlap of style tags (Jaccard), boosted by same size. */

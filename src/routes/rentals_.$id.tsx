@@ -14,6 +14,7 @@ export const Route = createFileRoute("/rentals_/$id")({
     { name: "description", content: "Pricing, pickup, messages and review for your rental." },
     { property: "og:title", content: "Rental details — SisUse" },
     { property: "og:description", content: "Pricing, pickup, messages and review for your rental." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: RentalDetail,
 });
@@ -35,14 +36,15 @@ function RentalDetail() {
   const [rv, setRv] = useState({ condition: 5, accuracy: 5, communication: 5, reliability: 5, text: "" });
   if (!r) return <p>Rental not found. <Link to="/rentals" className="underline">Back</Link></p>;
   const item = s.allItems.find((i) => i.id === r.itemId) ?? getItem(r.itemId)!;
-  const lending = r.ownerId === ME;
+  const lending = r.ownerId === (s.authUser?.id ?? ME);
   const owner = getUser(r.ownerId);
   const other = getUser(lending ? r.renterId : r.ownerId);
-  const p = priceRental(item, r.start, r.end, r.pointsUsed ?? 0);
+  const computed = priceRental(item, r.start, r.end, r.pointsUsed ?? 0);
+  const p = r.agreedPrice ? { ...computed, rental: r.agreedPrice.dailyRate * computed.days, cleaning: r.agreedPrice.cleaning, deposit: r.agreedPrice.deposit, total: r.agreedPrice.total } : computed;
   const idx = steps.indexOf(r.status);
   const n0 = next[r.status];
   // Only the lender accepts requests or confirms the returned condition.
-  const n = n0 && ((r.status === "Requested" || r.status === "Returned") ? lending : true) ? n0 : undefined;
+  const n = n0 && (r.real ? lending : ((r.status === "Requested" || r.status === "Returned") ? lending : true)) ? n0 : undefined;
 
   return (
     <div className="grid gap-8 md:grid-cols-[1fr_360px]">
@@ -62,16 +64,16 @@ function RentalDetail() {
 
         {n && (
           <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
-            {n.photo && <button onClick={() => setPhoto(true)} className={btnGhost}><Camera className="h-4 w-4" />{photo ? "Condition photos added ✓" : "Add condition photos"}</button>}
+            {!r.real && n.photo && <button onClick={() => setPhoto(true)} className={btnGhost}><Camera className="h-4 w-4" />{photo ? "Condition photos added ✓" : "Add condition photos"}</button>}
             <div className="flex flex-wrap gap-2">
-              <button disabled={n.photo && !photo} onClick={() => { s.setStatus(r.id, n.to); setPhoto(false); toast.success(`Status: ${n.to}`); }} className={btn}>{n.label}</button>
+              <button disabled={!r.real && n.photo && !photo} onClick={() => { s.setStatus(r.id, n.to); setPhoto(false); }} className={btn}>{r.real && r.status === "Returned" ? "Complete rental" : n.label}</button>
               {r.status === "Requested" && lending && <button onClick={() => { s.setStatus(r.id, "Declined"); toast("Request declined"); }} className={btnGhost}>Decline</button>}
             </div>
-            <DemoTag>Demo · simulated owner actions & payments</DemoTag>
+            {!r.real && <DemoTag>Demo · simulated owner actions & payments</DemoTag>}
           </div>
         )}
 
-        {r.status === "Completed" && !r.reviewed && !lending && (
+        {!r.real && r.status === "Completed" && !r.reviewed && !lending && (
           <div className="space-y-3 rounded-2xl border border-border bg-card p-5">
             <h2 className="text-2xl">Review this rental · +50 pts</h2>
             <p className="text-xs text-muted-foreground">Reviews focus on the item and the exchange — never on appearance or body.</p>
@@ -88,7 +90,7 @@ function RentalDetail() {
             {!s.soulmates.includes(owner.id) && <button onClick={() => s.toggleSoulmate(owner.id)} className={btn}>Save {owner.name} as Soulmate</button>}
             <Link to="/user/$id" params={{ id: owner.id }} className={btnGhost}>Browse closet</Link></div></div>}
 
-        {!n && r.status === "Requested" && !lending && <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-sm"><span className="flex-1 text-muted-foreground">Waiting for {owner.name} to accept.</span><button onClick={() => { s.setStatus(r.id, "Declined"); toast("Request cancelled"); }} className={btnGhost}>Cancel request</button></div>}
+        {!r.real && !n && r.status === "Requested" && !lending && <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-sm"><span className="flex-1 text-muted-foreground">Waiting for {owner.name} to accept.</span><button onClick={() => { s.setStatus(r.id, "Declined"); toast("Request cancelled"); }} className={btnGhost}>Cancel request</button></div>}
         {r.status === "Returned" && !lending && <p className="text-sm text-muted-foreground">{owner.name} is checking the condition; your deposit is released after.</p>}
         <GarmentCare item={item} defaultArea={getUser(ME).zip || getUser(ME).neighborhood} />
         <button onClick={() => toast("Report submitted. Our team will follow up.")} className="flex items-center gap-1 text-xs text-muted-foreground"><Flag className="h-3 w-3" />Report a problem (damage, late return, behavior)</button>
@@ -100,7 +102,7 @@ function RentalDetail() {
           <L a={`Rental (${p.days} days)`} b={p.rental} /><L a="Cleaning" b={p.cleaning} />{p.discount > 0 && <L a="Points" b={-p.discount} />}<L a="Deposit (refundable)" b={p.deposit} />
           <p className="flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span>${p.total}</span></p>
         </div>
-        <div className="flex h-96 flex-col rounded-2xl border border-border bg-card">
+        {!r.real && <div className="flex h-96 flex-col rounded-2xl border border-border bg-card">
           <div className="flex items-center gap-2 border-b border-border p-3"><Avatar id={other.id} size={32} /><span className="text-sm font-medium">{other.name}</span></div>
           <div className="flex-1 space-y-2 overflow-y-auto p-3">
             {r.messages.length === 0 && <p className="text-xs text-muted-foreground">Say hi and coordinate pickup and return.</p>}
@@ -109,7 +111,7 @@ function RentalDetail() {
           <form className="flex gap-2 border-t border-border p-2" onSubmit={(e) => { e.preventDefault(); if (msg.trim()) { s.sendMessage(r.id, msg); setMsg(""); } }}>
             <input className={input} value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Message" /><button aria-label="Send" className={btn + " px-3"}><Send className="h-4 w-4" /></button>
           </form>
-        </div>
+        </div>}
       </aside>
     </div>
   );

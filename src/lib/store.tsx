@@ -5,6 +5,8 @@ import type { FitProfile } from "./fit";
 import type { Block } from "./availability";
 import { seedOutings, type Outing } from "./outings";
 import { DEFAULT_STYLING, type StylingPrefs } from "./styling";
+import { readSharedRecords, saveSharedListing, createSharedRequest, changeSharedStatus, isRealId } from "./shared-records";
+import { toast } from "sonner";
 import { markSanitized, clearOnReturn } from "./sanitize";
 import { supabase } from "@/integrations/supabase/client";
 import { ME, users, seedRentals, type Rental, type RentalStatus, type Item, items as seedItems, demoMyItems } from "./data";
@@ -15,9 +17,9 @@ const initial: State = { lenderQuestions: [], savedOutfits: [], likedPosts: [], 
 
 type Ctx = State & {
   toggleFav: (id: string) => void; toggleSoulmate: (id: string) => void;
-  requestRental: (r: Omit<Rental, "id" | "status" | "messages" | "renterId">) => string;
+  requestRental: (r: Omit<Rental, "id" | "status" | "messages" | "renterId">) => Promise<string>;
   setStatus: (id: string, s: RentalStatus) => void; sendMessage: (id: string, text: string) => void;
-  review: (id: string) => void; addItem: (i: Item) => void; setBlocks: (itemId: string, blocks: Block[]) => void; markSanitized: (itemId: string) => void; postRequest: (t: string) => void; allItems: Item[];
+  review: (id: string) => void; addItem: (i: Item) => Promise<void>; setBlocks: (itemId: string, blocks: Block[]) => void; markSanitized: (itemId: string) => void; postRequest: (t: string) => void; allItems: Item[];
   allPosts: Post[]; earned: number; myCompleted: string[]; toggleLike: (id: string) => void; toggleSavePost: (id: string) => void; addPost: (p: Post) => void; skipPerson: (id: string) => void;
   authUser: { id: string; email: string } | null; authReady: boolean; profile: Profile | null; isDemo: boolean;
   updateProfile: (p: Profile) => Promise<string | null>; signOut: () => Promise<void>;
@@ -43,6 +45,7 @@ const applyProfile = (p: Profile | null, email?: string) => {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [s, set] = useState<State>(initial);
+  const [shared, setShared] = useState<{ items: Item[]; rentals: Rental[] }>({ items: [], rentals: [] });
   const [authUser, setAuthUser] = useState<{ id: string; email: string } | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -95,13 +98,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => { live = false; };
   }, [authUser?.id]);
 
+  const refreshShared = async () => { setShared(await readSharedRecords(authUser?.id)); };
+  useEffect(() => {
+    if (!authReady) return;
+    let live = true;
+    const load = () => { void readSharedRecords(authUser?.id).then((result) => { if (live) setShared(result); }).catch((e) => { if (live) toast.error(e.message ?? "Could not load shared listings"); }); };
+    setShared({ items: [], rentals: [] }); load();
+    const interval = setInterval(load, 15000);
+    window.addEventListener("focus", load);
+    return () => { live = false; clearInterval(interval); window.removeEventListener("focus", load); };
+  }, [authUser?.id, authReady]);
+  const lenderIdentity = () => ({ id: authUser?.id ?? "", name: profile?.display_name || "Member", neighborhood: profile?.neighborhood ?? "", zip: profile?.zip ?? "" });
+  const persistItem = (item: Item) => { void saveSharedListing(item, lenderIdentity()).then(refreshShared).catch((e) => toast.error(e.message)); };
+
   const tog = (arr: string[], id: string) => (arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id]);
   const upd = (id: string, f: (r: Rental) => Rental) => set((p) => ({ ...p, rentals: p.rentals.map((r) => (r.id === id ? f(r) : r)) }));
   const myCompleted = s.rentals.filter((r) => r.status === "Completed" && r.renterId === ME).map((r) => r.id);
   const allPosts = [...s.myPosts, ...seedPosts];
   const earned = s.myPosts.reduce((a, p) => a + postPoints(p, isVerified(p, myCompleted), false, false), 0);
   const ctx: Ctx = {
-    ...s, points: s.points + earned, earned, myCompleted, allPosts,
+    ...s, myItems: authUser ? shared.items.filter((item) => item.ownerId === authUser.id) : s.myItems, rentals: authUser ? shared.rentals : s.rentals, points: s.points + earned, earned, myCompleted, allPosts,
     toggleLike: (id) => set((p) => ({ ...p, likedPosts: tog(p.likedPosts, id) })),
     toggleSavePost: (id) => set((p) => ({ ...p, savedPosts: tog(p.savedPosts, id) })),
     addPost: (post) => set((p) => ({ ...p, myPosts: [post, ...p.myPosts] })),
@@ -131,23 +147,29 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setMeetup: (id, spot) => set((p) => ({ ...p, outings: p.outings.map((x) => (x.id === id ? { ...x, meetup: spot } : x)) })),
     outingMessage: (id, text) => set((p) => ({ ...p, outings: p.outings.map((x) => (x.id === id ? { ...x, messages: [...x.messages, { from: ME, text, at: "now" }] } : x)) })),
     skipPerson: (id) => set((p) => ({ ...p, skipped: [...p.skipped, id] })),
-    allItems: [...s.myItems, ...seedItems],
+    allItems: [...shared.items, ...(!authUser ? s.myItems : []), ...seedItems],
     toggleFav: (id) => set((p) => ({ ...p, favorites: tog(p.favorites, id) })),
     toggleSoulmate: (id) => set((p) => ({ ...p, soulmates: tog(p.soulmates, id) })),
-    requestRental: (r) => {
+    requestRental: async (r) => {
+      if (authUser) {
+        if (!isRealId(r.itemId)) throw new Error("Demo listings cannot receive real rental requests");
+        const id = await createSharedRequest(r, lenderIdentity()); await refreshShared(); return id;
+      }
       const id = "r" + Date.now();
       set((p) => ({ ...p, points: p.points - (r.pointsUsed ?? 0), rentals: [{ ...r, id, renterId: ME, status: "Requested", messages: [] }, ...p.rentals] }));
       return id;
     },
-    setStatus: (id, status) => set((p) => {
+    setStatus: (id, status) => {
+      if (isRealId(id)) { void changeSharedStatus(id, status).then(refreshShared).catch((e) => toast.error(e.message)); return; }
+      set((p) => {
       const r = p.rentals.find((x) => x.id === id);
       return { ...p, rentals: p.rentals.map((x) => (x.id === id ? { ...x, status } : x)), myItems: r && status === "Returned" ? clearOnReturn(p.myItems, r.itemId) : p.myItems };
-    }),
-    markSanitized: (itemId) => set((p) => ({ ...p, myItems: markSanitized(p.myItems, itemId, new Date().toISOString().slice(0, 10)) })),
+    }); },
+    markSanitized: (itemId) => { const item = shared.items.find((x) => x.id === itemId); if (item) { persistItem({ ...item, sanitizedAt: new Date().toISOString().slice(0, 10) }); return; } set((p) => ({ ...p, myItems: markSanitized(p.myItems, itemId, new Date().toISOString().slice(0, 10)) })); },
     sendMessage: (id, text) => upd(id, (r) => ({ ...r, messages: [...r.messages, { from: ME, text, at: "now" }] })),
     review: (id) => { upd(id, (r) => ({ ...r, reviewed: true })); set((p) => ({ ...p, points: p.points + 50 })); },
-    setBlocks: (itemId, blocks) => set((p) => ({ ...p, myItems: p.myItems.map((i) => (i.id === itemId ? { ...i, blocks } : i)) })),
-    addItem: (i) => set((p) => ({ ...p, myItems: [i, ...p.myItems] })),
+    setBlocks: (itemId, blocks) => { const item = shared.items.find((x) => x.id === itemId); if (item) { persistItem({ ...item, blocks }); return; } set((p) => ({ ...p, myItems: p.myItems.map((i) => (i.id === itemId ? { ...i, blocks } : i)) })); },
+    addItem: async (i) => { if (authUser) { await saveSharedListing(i, lenderIdentity()); await refreshShared(); } else set((p) => ({ ...p, myItems: [i, ...p.myItems] })); },
     postRequest: (t) => set((p) => ({ ...p, requests: [t, ...p.requests] })),
   };
   return <C.Provider value={ctx}>{children}</C.Provider>;

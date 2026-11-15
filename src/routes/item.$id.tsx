@@ -12,12 +12,13 @@ import { PreviewOnMe, FitCheckCard } from "@/components/preview-on-me";
 import { isClothing } from "@/lib/fit";
 
 export const Route = createFileRoute("/item/$id")({
-  loader: ({ params }) => { const item = getItem(params.id); if (!item) throw notFound(); return { title: item.title, desc: item.description }; },
+  loader: ({ params }) => { const item = getItem(params.id); return { title: item?.title ?? "Rental listing", desc: item?.description ?? "A piece from a SisUse member." }; },
   head: ({ loaderData }) => ({ meta: [
     { title: `${loaderData?.title ?? "Item"} — SisUse` },
     { name: "description", content: loaderData?.desc ?? "Rent this piece from a neighbor." },
     { property: "og:title", content: `${loaderData?.title ?? "Item"} — SisUse` },
     { property: "og:description", content: loaderData?.desc ?? "Rent this piece from a neighbor." },
+    { property: "og:type", content: "product" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: ItemPage,
 });
@@ -25,25 +26,30 @@ export const Route = createFileRoute("/item/$id")({
 function ItemPage() {
   const { id } = Route.useParams();
   const store = useStore();
-  const item = store.allItems.find((i) => i.id === id) ?? getItem(id)!;
+  const found = store.allItems.find((i) => i.id === id) ?? getItem(id);
+  if (!found) return <p>Loading listing…</p>;
+  return <LoadedItem item={found} />;
+}
+function LoadedItem({ item }: { item: import("@/lib/data").Item }) {
+  const store = useStore();
   const owner = getUser(item.ownerId);
   const nav = useNavigate();
   const [start, setStart] = useState("2026-11-20");
   const [end, setEnd] = useState("2026-11-22");
   const [pickup, setPickup] = useState<string>(pickupSpots[0]!);
   const [usePts, setUsePts] = useState(false);
-  const pts = usePts ? Math.floor(store.points / 100) * 100 : 0;
+  const pts = usePts && !item.real ? Math.floor(store.points / 100) * 100 : 0;
   const p = priceRental(item, start, end, pts);
   const blocked = isRangeBlocked(item, start, end);
   const nextFree = nextAvailable(item, start);
-  const mine = item.ownerId === ME;
+  const mine = item.ownerId === (store.authUser?.id ?? ME);
   const isSoul = store.soulmates.includes(owner.id);
   const match = compatibility(users.find((u) => u.id === ME)!, owner);
 
-  const request = () => {
-    const rid = store.requestRental({ itemId: item.id, ownerId: owner.id, start, end, pickup, pointsUsed: p.discount * 10 });
+  const request = async () => {
+    try { const rid = await store.requestRental({ itemId: item.id, ownerId: owner.id, start, end, pickup, pointsUsed: p.discount * 10 });
     toast.success("Request sent to " + owner.name);
-    nav({ to: "/rentals/$id", params: { id: rid } });
+    nav({ to: "/rentals/$id", params: { id: rid } }); } catch (e) { toast.error(e instanceof Error ? e.message : "Request could not be sent"); }
   };
 
   return (
@@ -103,7 +109,9 @@ function ItemPage() {
           </div>
           {blocked && <div className="rounded-xl bg-secondary p-3 text-sm"><p className="font-medium">Unavailable for selected dates</p><p className="text-muted-foreground">Next available: {fmt(nextFree)}. <button className="underline" onClick={() => { setStart(nextFree); setEnd(addDays(nextFree, 1)); }}>Use {fmt(nextFree)}–{fmt(addDays(nextFree, 1))}</button></p></div>}
           {mine && <p className="text-xs text-muted-foreground">This is your listing — manage dates in <Link to="/closet" className="underline">My Closet</Link>.</p>}
-          <button disabled={blocked || mine} onClick={request} className={btn + " w-full"}>Request to rent</button>
+          {!item.real && <p className="text-xs text-muted-foreground">Demo listing · no real rental requests.</p>}
+          {item.real && !store.authUser && <Link to="/auth" className={btnGhost}>Sign in to request this piece</Link>}
+          <button disabled={blocked || mine || (!!store.authUser && !item.real) || (!!item.real && !store.authUser)} onClick={request} className={btn + " w-full"}>Request to rent</button>
           <p className="flex gap-1 text-xs text-muted-foreground"><ShieldCheck className="h-4 w-4 shrink-0" />Free cancellation up to 48h before pickup. Condition photos at pickup & return; normal wear is never charged.</p>
           <p className="flex gap-1 text-xs text-muted-foreground"><Info className="h-4 w-4 shrink-0" />Prototype: no payment is taken. <Link to="/terms" className="underline">Rental terms</Link></p>
         </div>

@@ -44,6 +44,57 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          cleaning_fee: number
+          created_at: string
+          daily_rate: number
+          deposit: number
+          details: Json
+          id: string
+          neighborhood: string
+          owner_id: string
+          owner_name: string
+          photo_path: string
+          published: boolean
+          title: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          cleaning_fee?: number
+          created_at?: string
+          daily_rate: number
+          deposit?: number
+          details?: Json
+          id?: string
+          neighborhood?: string
+          owner_id: string
+          owner_name: string
+          photo_path: string
+          published?: boolean
+          title: string
+          updated_at?: string
+          zip?: string
+        }
+        Update: {
+          cleaning_fee?: number
+          created_at?: string
+          daily_rate?: number
+          deposit?: number
+          details?: Json
+          id?: string
+          neighborhood?: string
+          owner_id?: string
+          owner_name?: string
+          photo_path?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+          zip?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           bio: string
@@ -79,6 +130,71 @@ export type Database = {
           zip?: string
         }
         Relationships: []
+      }
+      rental_requests: {
+        Row: {
+          cleaning_fee: number
+          created_at: string
+          daily_rate: number
+          deposit: number
+          end_date: string
+          id: string
+          listing_id: string
+          owner_id: string
+          owner_name: string
+          pickup: string
+          renter_id: string
+          renter_name: string
+          start_date: string
+          status: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          cleaning_fee?: number
+          created_at?: string
+          daily_rate?: number
+          deposit?: number
+          end_date: string
+          id?: string
+          listing_id: string
+          owner_id: string
+          owner_name: string
+          pickup?: string
+          renter_id: string
+          renter_name: string
+          start_date: string
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          cleaning_fee?: number
+          created_at?: string
+          daily_rate?: number
+          deposit?: number
+          end_date?: string
+          id?: string
+          listing_id?: string
+          owner_id?: string
+          owner_name?: string
+          pickup?: string
+          renter_id?: string
+          renter_name?: string
+          start_date?: string
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_requests_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

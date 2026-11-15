@@ -32,6 +32,9 @@ use the editor.
 - App state (favorites, soulmates, rentals, points, listings) lives in src/lib/store.tsx with localStorage and seed data in src/lib/data.ts — prototype without backend; migrate to Lovable Cloud tables when persistence/auth is added.
 
 <!-- AGENT-MEMORY:BEGIN -->
+- Real listings, photos and rental requests use Cloud records with database-enforced ownership, price snapshots and serialized booking validation; local storage remains demo/social state only.
+- Keep stylist drafts, including uploaded File objects, in account-scoped session memory so detail-page round trips preserve work without persisting private photos.
+- Render brand lettering through the shared BrandLogo so header and footer typography stay identical.
 - Keep the shared page shell stable without route-keyed opacity animations; preload main sections after hydration to avoid adding a visual delay to every navigation.
 - Homepage destination tiles use per-tile scene metadata and portrait aspect ratios for full-outfit imagery, so people and landmarks remain visible across screen sizes without changing preserved tiles.
 <!-- AGENT-MEMORY:END -->

@@ -78,6 +78,7 @@
   --color-olive: var(--olive);
   --font-display: "Bricolage Grotesque", "DM Sans", system-ui, sans-serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-brand: "Instrument Serif", Georgia, serif;
   --shadow-soft: var(--shadow-soft);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -172,3 +173,7 @@ h1.font-bold, h2.font-bold, h1.font-semibold, h2.font-semibold, .font-display.fo
 @utility arch { border-radius: 9999px 9999px 0 0; }
 @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 @utility animate-marquee { animation: marquee 40s linear infinite; }
+
+.brand-logo { display: inline-flex; align-items: baseline; white-space: nowrap; font-family: var(--font-brand); font-size: 32px; font-weight: 400; line-height: 1; letter-spacing: 0; }
+.brand-logo em { margin-left: 0.025em; font-style: italic; font-weight: 400; }
+nav a:has(.brand-logo) { font-weight: 400; }
