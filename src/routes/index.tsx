@@ -8,14 +8,18 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover-soft-film.jpg";
+import tileDiscover from "@/assets/tile-discover-community-film.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
-import tileCloset from "@/assets/tile-closet-soft-film.jpg";
+import tileCloset from "@/assets/tile-closet-community-film.jpg";
 import coat from "@/assets/homepage-pink-coat.png.asset.json";
 import gown from "@/assets/homepage-gold-gown.png.asset.json";
 import knit from "@/assets/homepage-pink-knit.png.asset.json";
 import furMini from "@/assets/homepage-fur-mini.png.asset.json";
-import tryOn from "@/assets/tile-tryon-soft-film.jpg";
+import coatOptimized from "@/assets/homepage-pink-coat-backup.webp.asset.json";
+import gownOptimized from "@/assets/homepage-gold-gown-backup.webp.asset.json";
+import knitOptimized from "@/assets/homepage-pink-knit-backup.webp.asset.json";
+import furOptimized from "@/assets/homepage-fur-mini-backup.webp.asset.json";
+import tryOn from "@/assets/tile-tryon-community-film.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -37,10 +41,10 @@ const collections = [
 ];
 /** Popular-this-week collage: real outfit photos with mood tags (positions are % of the stage). */
 const popular = [
-  { img: coat.url, tag: "Soft satin, worn with denim", tone: "bg-blush", pos: "md:left-[4%] md:top-[4%]", to: "/discover", fit: "object-top" },
-  { img: gown.url, tag: "Gallery-opening glamour", tone: "bg-butter", pos: "md:right-[3%] md:top-[0%]", to: "/discover", fit: "object-top" },
-  { img: knit.url, tag: "Cozy oversized knits", tone: "bg-denim", pos: "md:left-[10%] md:bottom-[2%]", to: "/discover", fit: "object-top" },
-  { img: furMini.url, tag: "Fur-trim holiday mini", tone: "bg-clay", pos: "md:right-[6%] md:bottom-[6%]", to: "/discover", fit: "object-[50%_62%]" },
+  { img: coatOptimized.url, fallback: coat.url, tag: "Soft satin, worn with denim", tone: "bg-blush", pos: "md:left-[4%] md:top-[4%]", to: "/discover", fit: "object-top" },
+  { img: gownOptimized.url, fallback: gown.url, tag: "Gallery-opening glamour", tone: "bg-butter", pos: "md:right-[3%] md:top-[0%]", to: "/discover", fit: "object-top" },
+  { img: knitOptimized.url, fallback: knit.url, tag: "Cozy oversized knits", tone: "bg-denim", pos: "md:left-[10%] md:bottom-[2%]", to: "/discover", fit: "object-top" },
+  { img: furOptimized.url, fallback: furMini.url, tag: "Fur-trim holiday mini", tone: "bg-clay", pos: "md:right-[6%] md:bottom-[6%]", to: "/discover", fit: "object-[50%_62%]" },
 ];
 const steps = [
   { t: "Browse, AI Discover & AI Try-On", d: "Search by occasion, size and budget, get an AI-styled look, and preview pieces on yourself.", img: stepBrowse },
@@ -159,7 +163,12 @@ function Landing() {
       <section className="relative mx-auto flex max-w-7xl flex-col items-center gap-10 px-6 pb-14 md:block md:h-[1160px]">
         {popular.map((p) => (
           <Link key={p.tag} to={p.to as "/discover"} className={`group relative block w-52 md:absolute md:w-64 lg:w-80 ${p.pos}`}>
-            <img src={p.img} alt={p.tag} loading="eager" width={640} height={800} className={`aspect-[4/5] w-full rounded-[1.75rem] object-cover ${p.fit} shadow-soft transition duration-500 group-hover:-translate-y-1`} />
+            <img src={p.img} alt={p.tag} loading="eager" width={640} height={800} onError={(event) => {
+              const image = event.currentTarget;
+              if (image.dataset["fallbackUsed"]) return;
+              image.dataset["fallbackUsed"] = "true";
+              image.src = p.fallback;
+            }} className={`aspect-[4/5] w-full rounded-[1.75rem] object-cover ${p.fit} shadow-soft transition duration-500 group-hover:-translate-y-1`} />
             <span className={`mt-3 block rounded-full px-4 py-2 text-center text-xs leading-snug text-foreground shadow-soft md:text-sm ${p.tone}`}>{p.tag}</span>
           </Link>
         ))}

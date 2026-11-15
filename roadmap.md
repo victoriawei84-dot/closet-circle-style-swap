@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Check recurring Chrome photo failures, add same-photo recovery, and match three Inside SisUse tiles including their colors to unchanged Community photo. All four existing uploads loaded locally and on published site; original failure not reproduced. Optimized same-photo copies and original-upload fallback verified after interrupted requests, reload and Back at desktop/tablet/phone widths; Community and display dimensions unchanged.
+
 - [x] Create an eight-slide SisUse PowerPoint using brand photos and product screenshots; distinguish connected features from unverified two-account flow.
 
 - [x] Fix stacked Most-loved photos by using complete responsive position classes; retain all four images and their existing sizes.
