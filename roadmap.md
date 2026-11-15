@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Recolor clothes in Discover, AI Try-On and Manage your closet photos to complement Community with blush, sage, powder blue and butter yellow; preserve people, scenes, framing and Community. Desktop and phone appearance verified.
+
 - [x] Check recurring Chrome photo failures, add same-photo recovery, and match three Inside SisUse tiles including their colors to unchanged Community photo. All four existing uploads loaded locally and on published site; original failure not reproduced. Optimized same-photo copies and original-upload fallback verified after interrupted requests, reload and Back at desktop/tablet/phone widths; Community and display dimensions unchanged.
 
 - [x] Create an eight-slide SisUse PowerPoint using brand photos and product screenshots; distinguish connected features from unverified two-account flow.

@@ -8,9 +8,9 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover-community-film.jpg";
+import tileDiscover from "@/assets/tile-discover-pastel-outfits.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
-import tileCloset from "@/assets/tile-closet-community-film.jpg";
+import tileCloset from "@/assets/tile-closet-pastel-outfits.jpg";
 import coat from "@/assets/homepage-pink-coat.png.asset.json";
 import gown from "@/assets/homepage-gold-gown.png.asset.json";
 import knit from "@/assets/homepage-pink-knit.png.asset.json";
@@ -19,7 +19,7 @@ import coatOptimized from "@/assets/homepage-pink-coat-backup.webp.asset.json";
 import gownOptimized from "@/assets/homepage-gold-gown-backup.webp.asset.json";
 import knitOptimized from "@/assets/homepage-pink-knit-backup.webp.asset.json";
 import furOptimized from "@/assets/homepage-fur-mini-backup.webp.asset.json";
-import tryOn from "@/assets/tile-tryon-community-film.jpg";
+import tryOn from "@/assets/tile-tryon-pastel-outfit.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 const collections = [
   { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-center", scenic: true, alt: "Two women in coordinated full outfits walking across a Paris crosswalk", to: "/discover" },
-  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a sage blazer and jeans on a Paris street", to: "/item/burgundy-zip" },
+  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a powder-blue blazer, butter-yellow knit and jeans on a Paris street", to: "/item/burgundy-zip" },
   { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, fit: "object-center", to: "/community" },
   { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-center", scenic: true, to: "/closet" },
 ];
