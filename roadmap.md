@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Restore the four uploaded clothing photos, put Inside SisUse descriptions on their matching photos without changing image sizes, and remove the Eiffel Tower label.
+
 - [x] Complete rental lifecycle tracking and lender rental history with immutable status timestamps; demo page/filter navigation verified, 14 targeted tests passed. Real two-account check remains blocked below.
 
 - [x] Make all four Inside SisUse photos identical in display size and portrait format without shrinking them.

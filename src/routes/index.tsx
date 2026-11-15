@@ -11,10 +11,10 @@ import stepFriends from "@/assets/step-friends.jpg";
 import tileDiscover from "@/assets/tile-discover-soft-film.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
 import tileCloset from "@/assets/tile-closet-soft-film.jpg";
-import coat from "@/assets/pink-satin-coat.png.asset.json";
-import gown from "@/assets/olive-column-gown.png.asset.json";
-import knit from "@/assets/blush-oversized-knit.jpg.asset.json";
-import furMini from "@/assets/jacquard-fur-trim-mini.png.asset.json";
+import coat from "@/assets/homepage-pink-coat.png.asset.json";
+import gown from "@/assets/homepage-gold-gown.png.asset.json";
+import knit from "@/assets/homepage-pink-knit.png.asset.json";
+import furMini from "@/assets/homepage-fur-mini.png.asset.json";
 import tryOn from "@/assets/tile-tryon-soft-film.jpg";
 
 export const Route = createFileRoute("/")({
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
 
 const collections = [
   { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-center", scenic: true, alt: "Two women in coordinated full outfits walking across a Paris crosswalk", to: "/discover" },
-  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a sage blazer and jeans with the Eiffel Tower clearly visible", location: "Paris · Eiffel Tower", to: "/item/burgundy-zip" },
+  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a sage blazer and jeans on a Paris street", to: "/item/burgundy-zip" },
   { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, fit: "object-center", to: "/community" },
   { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-center", scenic: true, to: "/closet" },
 ];
@@ -139,14 +139,13 @@ function Landing() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {collections.map((c) => (
               <Link key={c.t} to={c.to as "/discover"} className="group block min-w-0">
-                <div className="space-y-2 pb-5 lg:min-h-[250px]">
-                  <h3 className="font-display text-3xl md:text-4xl">{c.t}</h3>
-                  <p className="max-w-xs text-sm text-muted-foreground">{c.d}</p>
-                  <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-border px-5 py-2 text-xs text-foreground transition group-hover:bg-primary group-hover:text-primary-foreground">Explore <ArrowUpRight className="h-3.5 w-3.5" /></span>
-                </div>
                 <div className="relative aspect-[896/1600] overflow-hidden">
-                <img src={c.img} alt={c.alt ?? c.t} loading="lazy" width={896} height={c.scenic ? 1600 : 1280} className={`h-full w-full object-cover ${c.fit} transition duration-700 group-hover:scale-105`} />
-                {c.location && <span className="absolute bottom-4 left-4 bg-ink/60 px-3 py-1.5 text-xs text-ink-foreground backdrop-blur-sm">{c.location}</span>}
+                  <img src={c.img} alt={c.alt ?? c.t} loading="eager" width={896} height={1600} className={`h-full w-full object-cover ${c.fit} transition duration-700 group-hover:scale-105`} />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/95 via-ink/75 to-transparent px-5 pb-5 pt-14 text-ink-foreground">
+                    <h3 className="font-display text-3xl leading-tight">{c.t}</h3>
+                    <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-foreground/95">{c.d}</p>
+                    <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink-foreground/70 px-5 py-2 text-xs transition group-hover:bg-ink-foreground group-hover:text-ink">Explore <ArrowUpRight className="h-3.5 w-3.5" /></span>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -160,7 +159,7 @@ function Landing() {
       <section className="relative mx-auto flex max-w-7xl flex-col items-center gap-10 px-6 pb-14 md:block md:h-[1160px]">
         {popular.map((p) => (
           <Link key={p.tag} to={p.to as "/discover"} className={`group relative block w-52 md:absolute md:w-64 lg:w-80 ${p.pos.replaceAll("left-", "md:left-").replaceAll("right-", "md:right-").replaceAll("top-", "md:top-").replaceAll("bottom-", "md:bottom-")}`}>
-            <img src={p.img} alt={p.tag} loading="lazy" className={`aspect-[4/5] w-full rounded-[1.75rem] object-cover ${p.fit} shadow-soft transition duration-500 group-hover:-translate-y-1`} />
+            <img src={p.img} alt={p.tag} loading="eager" width={640} height={800} className={`aspect-[4/5] w-full rounded-[1.75rem] object-cover ${p.fit} shadow-soft transition duration-500 group-hover:-translate-y-1`} />
             <span className={`mt-3 block rounded-full px-4 py-2 text-center text-xs leading-snug text-foreground shadow-soft md:text-sm ${p.tone}`}>{p.tag}</span>
           </Link>
         ))}
