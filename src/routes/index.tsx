@@ -15,10 +15,10 @@ import coat from "@/assets/homepage-pink-coat.png.asset.json";
 import gown from "@/assets/homepage-gold-gown.png.asset.json";
 import knit from "@/assets/homepage-pink-knit.png.asset.json";
 import furMini from "@/assets/homepage-fur-mini.png.asset.json";
-import coatOptimized from "@/assets/homepage-pink-coat-backup.webp.asset.json";
-import gownOptimized from "@/assets/homepage-gold-gown-backup.webp.asset.json";
-import knitOptimized from "@/assets/homepage-pink-knit-backup.webp.asset.json";
-import furOptimized from "@/assets/homepage-fur-mini-backup.webp.asset.json";
+import coatStyled from "@/assets/popular-pink-coat-rouje.jpg";
+import gownStyled from "@/assets/popular-gold-gown-rouje.jpg";
+import knitStyled from "@/assets/popular-pink-knit-rouje.jpg";
+import furStyled from "@/assets/popular-fur-mini-rouje.jpg";
 import tryOn from "@/assets/tile-tryon-matched-sky.jpg";
 
 export const Route = createFileRoute("/")({
@@ -41,10 +41,10 @@ const collections = [
 ];
 /** Popular-this-week collage: real outfit photos with mood tags (positions are % of the stage). */
 const popular = [
-  { img: coatOptimized.url, fallback: coat.url, tag: "Soft satin, worn with denim", tone: "bg-blush", pos: "md:left-[4%] md:top-[4%]", to: "/discover", fit: "object-top" },
-  { img: gownOptimized.url, fallback: gown.url, tag: "Gallery-opening glamour", tone: "bg-butter", pos: "md:right-[3%] md:top-[0%]", to: "/discover", fit: "object-top" },
-  { img: knitOptimized.url, fallback: knit.url, tag: "Cozy oversized knits", tone: "bg-denim", pos: "md:left-[10%] md:bottom-[2%]", to: "/discover", fit: "object-top" },
-  { img: furOptimized.url, fallback: furMini.url, tag: "Fur-trim holiday mini", tone: "bg-clay", pos: "md:right-[6%] md:bottom-[6%]", to: "/discover", fit: "object-[50%_62%]" },
+  { img: coatStyled, fallback: coat.url, tag: "Soft satin, worn with denim", tone: "bg-blush", pos: "md:left-[4%] md:top-[4%]", to: "/discover", fit: "object-top" },
+  { img: gownStyled, fallback: gown.url, tag: "Gallery-opening glamour", tone: "bg-butter", pos: "md:right-[3%] md:top-[0%]", to: "/discover", fit: "object-top" },
+  { img: knitStyled, fallback: knit.url, tag: "Cozy oversized knits", tone: "bg-denim", pos: "md:left-[10%] md:bottom-[2%]", to: "/discover", fit: "object-top" },
+  { img: furStyled, fallback: furMini.url, tag: "Fur-trim holiday mini", tone: "bg-clay", pos: "md:right-[6%] md:bottom-[6%]", to: "/discover", fit: "object-[50%_62%]" },
 ];
 const steps = [
   { t: "Browse, AI Discover & AI Try-On", d: "Search by occasion, size and budget, get an AI-styled look, and preview pieces on yourself.", img: stepBrowse },
