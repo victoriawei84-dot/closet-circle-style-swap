@@ -8,7 +8,7 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover-pastel-outfits.jpg";
+import tileDiscover from "@/assets/tile-discover-muted-grain.jpg";
 import tileCommunity from "@/assets/tile-community.jpg";
 import tileCloset from "@/assets/tile-closet-coffee-blazer.jpg";
 import coat from "@/assets/homepage-pink-coat.png.asset.json";
@@ -19,7 +19,7 @@ import coatOptimized from "@/assets/homepage-pink-coat-backup.webp.asset.json";
 import gownOptimized from "@/assets/homepage-gold-gown-backup.webp.asset.json";
 import knitOptimized from "@/assets/homepage-pink-knit-backup.webp.asset.json";
 import furOptimized from "@/assets/homepage-fur-mini-backup.webp.asset.json";
-import tryOn from "@/assets/tile-tryon-beige-knit.jpg";
+import tryOn from "@/assets/tile-tryon-muted-grain.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
