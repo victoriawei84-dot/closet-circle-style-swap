@@ -37,10 +37,10 @@ const collections = [
 ];
 /** Popular-this-week collage: real outfit photos with mood tags (positions are % of the stage). */
 const popular = [
-  { img: coat.url, tag: "Soft satin, worn with denim", tone: "bg-blush", pos: "left-[4%] top-[4%]", tagPos: "left-3 top-4", to: "/discover", fit: "object-top" },
-  { img: gown.url, tag: "Gallery-opening glamour", tone: "bg-butter", pos: "right-[3%] top-[0%]", tagPos: "right-3 top-6", to: "/discover", fit: "object-top" },
-  { img: knit.url, tag: "Cozy oversized knits", tone: "bg-denim", pos: "left-[10%] bottom-[2%]", tagPos: "left-3 top-4", to: "/discover", fit: "object-top" },
-  { img: furMini.url, tag: "Fur-trim holiday mini", tone: "bg-clay", pos: "right-[6%] bottom-[6%]", tagPos: "right-3 bottom-4", to: "/discover", fit: "object-[50%_62%]" },
+  { img: coat.url, tag: "Soft satin, worn with denim", tone: "bg-blush", pos: "md:left-[4%] md:top-[4%]", to: "/discover", fit: "object-top" },
+  { img: gown.url, tag: "Gallery-opening glamour", tone: "bg-butter", pos: "md:right-[3%] md:top-[0%]", to: "/discover", fit: "object-top" },
+  { img: knit.url, tag: "Cozy oversized knits", tone: "bg-denim", pos: "md:left-[10%] md:bottom-[2%]", to: "/discover", fit: "object-top" },
+  { img: furMini.url, tag: "Fur-trim holiday mini", tone: "bg-clay", pos: "md:right-[6%] md:bottom-[6%]", to: "/discover", fit: "object-[50%_62%]" },
 ];
 const steps = [
   { t: "Browse, AI Discover & AI Try-On", d: "Search by occasion, size and budget, get an AI-styled look, and preview pieces on yourself.", img: stepBrowse },
@@ -158,7 +158,7 @@ function Landing() {
       {/* POPULAR — scattered photo collage around a centered headline */}
       <section className="relative mx-auto flex max-w-7xl flex-col items-center gap-10 px-6 pb-14 md:block md:h-[1160px]">
         {popular.map((p) => (
-          <Link key={p.tag} to={p.to as "/discover"} className={`group relative block w-52 md:absolute md:w-64 lg:w-80 ${p.pos.replaceAll("left-", "md:left-").replaceAll("right-", "md:right-").replaceAll("top-", "md:top-").replaceAll("bottom-", "md:bottom-")}`}>
+          <Link key={p.tag} to={p.to as "/discover"} className={`group relative block w-52 md:absolute md:w-64 lg:w-80 ${p.pos}`}>
             <img src={p.img} alt={p.tag} loading="eager" width={640} height={800} className={`aspect-[4/5] w-full rounded-[1.75rem] object-cover ${p.fit} shadow-soft transition duration-500 group-hover:-translate-y-1`} />
             <span className={`mt-3 block rounded-full px-4 py-2 text-center text-xs leading-snug text-foreground shadow-soft md:text-sm ${p.tone}`}>{p.tag}</span>
           </Link>
