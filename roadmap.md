@@ -1,6 +1,8 @@
 # Roadmap
 
-- [x] Recolor clothes in Discover, AI Try-On and Manage your closet photos to complement Community with blush, sage, powder blue and butter yellow; preserve people, scenes, framing and Community. Desktop and phone appearance verified.
+- [x] Remove blue clothing from AI Try-On and Manage your closet photos; use blush, ivory, sage and butter yellow. Desktop and phone verified; Community unchanged.
+
+- [x] Recolor clothes in Discover, AI Try-On and Manage your closet photos to complement Community; preserve people, scenes, framing and Community. Desktop and phone appearance verified.
 
 - [x] Check recurring Chrome photo failures, add same-photo recovery, and match three Inside SisUse tiles including their colors to unchanged Community photo. All four existing uploads loaded locally and on published site; original failure not reproduced. Optimized same-photo copies and original-upload fallback verified after interrupted requests, reload and Back at desktop/tablet/phone widths; Community and display dimensions unchanged.
 
