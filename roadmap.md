@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Replace yellow clothing with beige knit and coffee-colored hanging blazer; preserve other photo details. Desktop and phone verified.
+
 - [x] Remove blue clothing from AI Try-On and Manage your closet photos; use blush, ivory, sage and butter yellow. Desktop and phone verified; Community unchanged.
 
 - [x] Recolor clothes in Discover, AI Try-On and Manage your closet photos to complement Community; preserve people, scenes, framing and Community. Desktop and phone appearance verified.
