@@ -36,6 +36,13 @@
       "when": 1794700974187,
       "tag": "0004_listing_photo_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794701112958,
+      "tag": "0005_rental_lifecycle_timeline",
+      "breakpoints": true
     }
   ]
 }

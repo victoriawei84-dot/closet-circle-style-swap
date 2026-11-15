@@ -39,7 +39,7 @@ function Rentals() {
   const pending = lending.filter((r) => r.status === "Requested").length;
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-semibold">Rentals</h1>
+      <div className="flex items-center justify-between gap-4"><h1 className="text-4xl font-semibold">Rentals</h1><Link to="/rentals/history" className="text-sm underline">Rental history</Link></div>
       <div role="tablist" className="inline-flex rounded-full bg-muted p-1 text-sm">
         {([["borrow", `Borrowing (${borrowing.length})`], ["lend", `Lending (${lending.length})${pending ? ` · ${pending} new` : ""}`]] as const).map(([k, l]) => (
           <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={"rounded-full px-5 py-2 transition " + (tab === k ? "bg-background shadow-soft" : "text-muted-foreground")}>{l}</button>

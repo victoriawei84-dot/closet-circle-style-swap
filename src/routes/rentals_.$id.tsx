@@ -33,6 +33,8 @@ function RentalDetail() {
   const r = s.rentals.find((x) => x.id === id);
   const [msg, setMsg] = useState("");
   const [photo, setPhoto] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [statusError, setStatusError] = useState("");
   const [rv, setRv] = useState({ condition: 5, accuracy: 5, communication: 5, reliability: 5, text: "" });
   if (!r) return <p>Rental not found. <Link to="/rentals" className="underline">Back</Link></p>;
   const item = s.allItems.find((i) => i.id === r.itemId) ?? getItem(r.itemId)!;
@@ -45,6 +47,12 @@ function RentalDetail() {
   const n0 = next[r.status];
   // Only the lender accepts requests or confirms the returned condition.
   const n = n0 && (r.real ? lending : ((r.status === "Requested" || r.status === "Returned") ? lending : true)) ? n0 : undefined;
+  const changeStatus = async (status: RentalStatus) => {
+    setSaving(true); setStatusError("");
+    try { await s.setStatus(r.id, status); setPhoto(false); toast.success(`Rental ${status.toLowerCase()}`); }
+    catch (error) { setStatusError(error instanceof Error ? error.message : "Could not update this rental. Please retry."); }
+    finally { setSaving(false); }
+  };
 
   return (
     <div className="grid gap-8 md:grid-cols-[1fr_360px]">
@@ -66,12 +74,15 @@ function RentalDetail() {
           <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
             {!r.real && n.photo && <button onClick={() => setPhoto(true)} className={btnGhost}><Camera className="h-4 w-4" />{photo ? "Condition photos added ✓" : "Add condition photos"}</button>}
             <div className="flex flex-wrap gap-2">
-              <button disabled={!r.real && n.photo && !photo} onClick={() => { s.setStatus(r.id, n.to); setPhoto(false); }} className={btn}>{r.real && r.status === "Returned" ? "Complete rental" : n.label}</button>
-              {r.status === "Requested" && lending && <button onClick={() => { s.setStatus(r.id, "Declined"); toast("Request declined"); }} className={btnGhost}>Decline</button>}
+              <button disabled={saving || (!r.real && n.photo && !photo)} onClick={() => changeStatus(n.to)} className={btn}>{saving ? "Saving…" : r.real && r.status === "Returned" ? "Complete rental" : n.label}</button>
+              {r.status === "Requested" && lending && <button disabled={saving} onClick={() => changeStatus("Declined")} className={btnGhost}>Decline</button>}
             </div>
             {!r.real && <DemoTag>Demo · simulated owner actions & payments</DemoTag>}
           </div>
         )}
+
+        {statusError && <p role="alert" className="text-sm text-destructive">{statusError}</p>}
+        {r.real && <section className="space-y-3 border-t border-border pt-5"><h2 className="text-2xl">Rental timeline</h2><ol className="space-y-2">{(r.events ?? []).map((event) => <li key={event.at + event.status} className="flex flex-wrap justify-between gap-2 text-sm"><span>{event.status}</span><time className="text-muted-foreground" dateTime={event.at}>{new Date(event.at).toLocaleString()}</time></li>)}</ol><Link to="/rentals/history" className="text-sm underline">View rental history</Link></section>}
 
         {!r.real && r.status === "Completed" && !r.reviewed && !lending && (
           <div className="space-y-3 rounded-2xl border border-border bg-card p-5">

@@ -18,7 +18,7 @@ const initial: State = { lenderQuestions: [], savedOutfits: [], likedPosts: [], 
 type Ctx = State & {
   toggleFav: (id: string) => void; toggleSoulmate: (id: string) => void;
   requestRental: (r: Omit<Rental, "id" | "status" | "messages" | "renterId">) => Promise<string>;
-  setStatus: (id: string, s: RentalStatus) => void; sendMessage: (id: string, text: string) => void;
+  setStatus: (id: string, s: RentalStatus) => Promise<void>; sendMessage: (id: string, text: string) => void;
   review: (id: string) => void; addItem: (i: Item) => Promise<void>; setBlocks: (itemId: string, blocks: Block[]) => void; markSanitized: (itemId: string) => void; postRequest: (t: string) => void; allItems: Item[];
   allPosts: Post[]; earned: number; myCompleted: string[]; toggleLike: (id: string) => void; toggleSavePost: (id: string) => void; addPost: (p: Post) => void; skipPerson: (id: string) => void;
   authUser: { id: string; email: string } | null; authReady: boolean; profile: Profile | null; isDemo: boolean;
@@ -159,8 +159,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       set((p) => ({ ...p, points: p.points - (r.pointsUsed ?? 0), rentals: [{ ...r, id, renterId: ME, status: "Requested", messages: [] }, ...p.rentals] }));
       return id;
     },
-    setStatus: (id, status) => {
-      if (isRealId(id)) { void changeSharedStatus(id, status).then(refreshShared).catch((e) => toast.error(e.message)); return; }
+    setStatus: async (id, status) => {
+      if (isRealId(id)) { await changeSharedStatus(id, status); await refreshShared(); return; }
       set((p) => {
       const r = p.rentals.find((x) => x.id === id);
       return { ...p, rentals: p.rentals.map((x) => (x.id === id ? { ...x, status } : x)), myItems: r && status === "Returned" ? clearOnReturn(p.myItems, r.itemId) : p.myItems };

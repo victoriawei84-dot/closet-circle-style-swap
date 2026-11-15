@@ -25,6 +25,7 @@ import { Route as ApiStylistLookRouteImport } from './routes/api/stylist-look'
 import { Route as CommunityPostIdRouteImport } from './routes/community-post.$id'
 import { Route as ItemIdRouteImport } from './routes/item.$id'
 import { Route as RentalsIdRouteImport } from './routes/rentals_.$id'
+import { Route as RentalsHistoryRouteImport } from './routes/rentals_.history'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -107,6 +108,11 @@ const RentalsIdRoute = RentalsIdRouteImport.update({
   path: '/rentals/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RentalsHistoryRoute = RentalsHistoryRouteImport.update({
+  id: '/rentals_/history',
+  path: '/rentals/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UserIdRoute = UserIdRouteImport.update({
   id: '/user/$id',
   path: '/user/$id',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/community-post/$id': typeof CommunityPostIdRoute
   '/item/$id': typeof ItemIdRoute
   '/rentals/$id': typeof RentalsIdRoute
+  '/rentals/history': typeof RentalsHistoryRoute
   '/user/$id': typeof UserIdRoute
 }
 export interface FileRoutesByTo {
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/community-post/$id': typeof CommunityPostIdRoute
   '/item/$id': typeof ItemIdRoute
   '/rentals/$id': typeof RentalsIdRoute
+  '/rentals/history': typeof RentalsHistoryRoute
   '/user/$id': typeof UserIdRoute
 }
 export interface FileRoutesById {
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/community-post/$id': typeof CommunityPostIdRoute
   '/item/$id': typeof ItemIdRoute
   '/rentals_/$id': typeof RentalsIdRoute
+  '/rentals_/history': typeof RentalsHistoryRoute
   '/user/$id': typeof UserIdRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/community-post/$id'
     | '/item/$id'
     | '/rentals/$id'
+    | '/rentals/history'
     | '/user/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/community-post/$id'
     | '/item/$id'
     | '/rentals/$id'
+    | '/rentals/history'
     | '/user/$id'
   id:
     | '__root__'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/community-post/$id'
     | '/item/$id'
     | '/rentals_/$id'
+    | '/rentals_/history'
     | '/user/$id'
   fileRoutesById: FileRoutesById
 }
@@ -248,6 +260,7 @@ export interface RootRouteChildren {
   CommunityPostIdRoute: typeof CommunityPostIdRoute
   ItemIdRoute: typeof ItemIdRoute
   RentalsIdRoute: typeof RentalsIdRoute
+  RentalsHistoryRoute: typeof RentalsHistoryRoute
   UserIdRoute: typeof UserIdRoute
 }
 
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RentalsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rentals_/history': {
+      id: '/rentals_/history'
+      path: '/rentals/history'
+      fullPath: '/rentals/history'
+      preLoaderRoute: typeof RentalsHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/user/$id': {
       id: '/user/$id'
       path: '/user/$id'
@@ -392,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityPostIdRoute: CommunityPostIdRoute,
   ItemIdRoute: ItemIdRoute,
   RentalsIdRoute: RentalsIdRoute,
+  RentalsHistoryRoute: RentalsHistoryRoute,
   UserIdRoute: UserIdRoute,
 }
 export const routeTree = rootRouteImport

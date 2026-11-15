@@ -49,6 +49,7 @@ export type Item = {
 };
 export type RentalStatus = "Requested" | "Confirmed" | "Picked Up" | "Returned" | "Completed" | "Declined";
 export type Rental = {
+  events?: { status: string; actorId: string; at: string }[];
   real?: boolean; agreedPrice?: { dailyRate: number; cleaning: number; deposit: number; total: number }; createdAt?: string; updatedAt?: string;
   id: string; itemId: string; renterId: string; ownerId: string; start: string; end: string; status: RentalStatus;
   pickup: string; messages: { from: string; text: string; at: string }[]; reviewed?: boolean; pointsUsed?: number;

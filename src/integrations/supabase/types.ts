@@ -131,6 +131,38 @@ export type Database = {
         }
         Relationships: []
       }
+      rental_events: {
+        Row: {
+          actor_id: string
+          id: string
+          occurred_at: string
+          rental_id: string
+          status: string
+        }
+        Insert: {
+          actor_id: string
+          id?: string
+          occurred_at?: string
+          rental_id: string
+          status: string
+        }
+        Update: {
+          actor_id?: string
+          id?: string
+          occurred_at?: string
+          rental_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_events_rental_id_fkey"
+            columns: ["rental_id"]
+            isOneToOne: false
+            referencedRelation: "rental_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_requests: {
         Row: {
           cleaning_fee: number

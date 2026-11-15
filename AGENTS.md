@@ -32,6 +32,7 @@ use the editor.
 - App state (favorites, soulmates, rentals, points, listings) lives in src/lib/store.tsx with localStorage and seed data in src/lib/data.ts — prototype without backend; migrate to Lovable Cloud tables when persistence/auth is added.
 
 <!-- AGENT-MEMORY:BEGIN -->
+- Rental lifecycle events are immutable database-triggered records visible only to participants; await status writes before showing success so rejected bookings never look confirmed.
 - Real listings, photos and rental requests use Cloud records with database-enforced ownership, price snapshots and serialized booking validation; local storage remains demo/social state only.
 - Keep stylist drafts, including uploaded File objects, in account-scoped session memory so detail-page round trips preserve work without persisting private photos.
 - Render brand lettering through the shared BrandLogo so header and footer typography stay identical.

@@ -27,9 +27,11 @@ export async function readSharedRecords(userId?: string) {
   if (userId) {
     const { data, error } = await supabase.from("rental_requests").select("*").order("created_at", { ascending: false });
     if (error) throw error;
+    const { data: events, error: eventError } = await supabase.from("rental_events").select("*").order("occurred_at");
+    if (eventError) throw eventError;
     for (const row of data ?? []) {
       registerMember(row.owner_id, row.owner_name); registerMember(row.renter_id, row.renter_name);
-      sharedRentals.push({ id: row.id, itemId: row.listing_id, ownerId: row.owner_id, renterId: row.renter_id, start: row.start_date, end: row.end_date, status: row.status as Rental["status"], pickup: row.pickup, messages: [], real: true, agreedPrice: { dailyRate: Number(row.daily_rate), cleaning: Number(row.cleaning_fee), deposit: Number(row.deposit), total: Number(row.total) }, createdAt: row.created_at, updatedAt: row.updated_at });
+      sharedRentals.push({ id: row.id, itemId: row.listing_id, ownerId: row.owner_id, renterId: row.renter_id, start: row.start_date, end: row.end_date, status: row.status as Rental["status"], pickup: row.pickup, messages: [], real: true, events: (events ?? []).filter((event) => event.rental_id === row.id).map((event) => ({ status: event.status, actorId: event.actor_id, at: event.occurred_at })), agreedPrice: { dailyRate: Number(row.daily_rate), cleaning: Number(row.cleaning_fee), deposit: Number(row.deposit), total: Number(row.total) }, createdAt: row.created_at, updatedAt: row.updated_at });
     }
   }
   return { items: sharedItems, rentals: sharedRentals };
