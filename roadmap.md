@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Create an eight-slide SisUse PowerPoint using brand photos and product screenshots; distinguish connected features from unverified two-account flow.
+
 - [x] Fix stacked Most-loved photos by using complete responsive position classes; retain all four images and their existing sizes.
 
 - [x] Restore the four uploaded clothing photos, put Inside SisUse descriptions on their matching photos without changing image sizes, and remove the Eiffel Tower label.
