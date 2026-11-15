@@ -8,9 +8,9 @@ import stepBrowse from "@/assets/step-browse.jpg";
 import stepMessage from "@/assets/step-message.jpg";
 import stepWear from "@/assets/step-wear.jpg";
 import stepFriends from "@/assets/step-friends.jpg";
-import tileDiscover from "@/assets/tile-discover-final.jpg";
-import tileCommunity from "@/assets/tile-community-final.jpg";
-import tileCloset from "@/assets/tile-closet-final.jpg";
+import tileDiscover from "@/assets/tile-discover-real.jpg";
+import tileCommunity from "@/assets/tile-community-real.jpg";
+import tileCloset from "@/assets/tile-closet-real.jpg";
 import coat from "@/assets/homepage-pink-coat.png.asset.json";
 import gown from "@/assets/homepage-gold-gown.png.asset.json";
 import knit from "@/assets/homepage-pink-knit.png.asset.json";
@@ -19,7 +19,7 @@ import coatStyled from "@/assets/popular-pink-coat-rouje.jpg";
 import gownStyled from "@/assets/popular-gold-gown-rouje.jpg";
 import knitStyled from "@/assets/popular-pink-knit-rouje.jpg";
 import furStyled from "@/assets/popular-fur-mini-rouje.jpg";
-import tryOn from "@/assets/tile-tryon-final.jpg";
+import tryOn from "@/assets/tile-tryon-real.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
