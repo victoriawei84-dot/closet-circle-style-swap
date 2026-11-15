@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 const collections = [
   { t: "Discover", d: "Browse neighbors' closets or let AI style a full look for your plans — then preview it on you.", img: tileDiscover, fit: "object-center", scenic: true, alt: "Two women in coordinated full outfits walking across a Paris crosswalk", to: "/discover" },
-  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a blush blazer, beige knit and ivory trousers on a Paris street", to: "/item/burgundy-zip" },
+  { t: "AI Try-On", d: "Upload a photo—or go face-free. Choose a scene you love and preview your next look before you borrow.", img: tryOn, fit: "object-center", scenic: true, alt: "A woman in a camel coat and rose midi skirt near the Eiffel Tower", to: "/item/burgundy-zip" },
   { t: "Meet your community", d: "Real outfits from real neighbors. Save looks and follow women who share your taste.", img: tileCommunity, fit: "object-center", to: "/community" },
   { t: "Manage your closet", d: "List what you rarely wear, set your price and dates, and earn from every rental.", img: tileCloset, fit: "object-center", scenic: true, to: "/closet" },
 ];
